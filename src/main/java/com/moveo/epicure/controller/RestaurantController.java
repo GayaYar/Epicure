@@ -1,8 +1,8 @@
 package com.moveo.epicure.controller;
 
-import com.moveo.epicure.dto.FullMealDTO;
-import com.moveo.epicure.dto.FullRestaurantDTO;
+import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RestaurantDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
 import java.util.List;
@@ -22,12 +22,12 @@ public class RestaurantController {
     private RestaurantService service;
 
     @GetMapping(value = "/popular")
-    public ResponseEntity<List<RestaurantDTO>> getPopularRestaurants(@RequestParam(required = false) Integer amount) {
+    public ResponseEntity<List<RestaurantBriefDTO>> getPopularRestaurants(@RequestParam(required = false) Integer amount) {
         return ResponseEntity.ok(service.getPopulars(amount));
     }
 
     @GetMapping()
-    public ResponseEntity<List<RestaurantDTO>> getRestaurants(@RequestParam(required = false) Integer minPrice,
+    public ResponseEntity<List<RestaurantBriefDTO>> getRestaurants(@RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice, @RequestParam(required = false) Boolean newest,
             @RequestParam(required = false) Boolean popular, @RequestParam(required = false) Integer distance,
             @RequestParam(required = false) Boolean open, @RequestParam(required = false) Integer rating) {
@@ -35,8 +35,8 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<FullRestaurantDTO> findById(@PathVariable Integer id) {
-        Optional<FullRestaurantDTO> optionalRestaurant = service.findById(id);
+    public ResponseEntity<RestaurantDTO> findById(@PathVariable Integer id) {
+        Optional<RestaurantDTO> optionalRestaurant = service.findById(id);
         if(optionalRestaurant.isEmpty()) {
             throw new NotFoundException();
         }
@@ -44,8 +44,8 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/meals/{id}")
-    public ResponseEntity<FullMealDTO> getMeal(@PathVariable Integer id) {
-        Optional<FullMealDTO> optionalMeal = service.findMeal(id);
+    public ResponseEntity<MealDTO> getMeal(@PathVariable Integer id) {
+        Optional<MealDTO> optionalMeal = service.findMeal(id);
         if(optionalMeal.isEmpty()) {
             throw new NotFoundException();
         }

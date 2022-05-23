@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class RestaurantMeals {
     private String category;
-    private List<MealDTO> meals;
+    private List<MealBriefDTO> meals;
 }
