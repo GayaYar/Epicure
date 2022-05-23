@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class ChoiceDTO {
+
     private String title;
     private List<String> options;
     private Integer minChoices;

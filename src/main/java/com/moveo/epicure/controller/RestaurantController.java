@@ -7,8 +7,10 @@ import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,19 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("restaurants")
+@Validated
 public class RestaurantController {
     @Autowired
     private RestaurantService service;
 
     @GetMapping(value = "/popular")
-    public ResponseEntity<List<RestaurantBriefDTO>> getPopularRestaurants(@RequestParam(required = false) Integer amount) {
+    public ResponseEntity<List<RestaurantBriefDTO>> getPopularRestaurants(@RequestParam(required = false) @Min(0) Integer amount) {
         return ResponseEntity.ok(service.getPopulars(amount));
     }
 
     @GetMapping()
-    public ResponseEntity<List<RestaurantBriefDTO>> getRestaurants(@RequestParam(required = false) Integer minPrice,
-            @RequestParam(required = false) Integer maxPrice, @RequestParam(required = false) Boolean newest,
-            @RequestParam(required = false) Boolean popular, @RequestParam(required = false) Integer distance,
+    public ResponseEntity<List<RestaurantBriefDTO>> getRestaurants(@RequestParam(required = false) @Min(0) Integer minPrice,
+            @RequestParam(required = false) @Min(0) Integer maxPrice, @RequestParam(required = false) Boolean newest,
+            @RequestParam(required = false) Boolean popular, @RequestParam(required = false) @Min(0) Integer distance,
             @RequestParam(required = false) Boolean open, @RequestParam(required = false) Integer rating) {
         return ResponseEntity.ok(service.getAllSorted(minPrice, maxPrice, newest, popular, distance, open, rating));
     }
