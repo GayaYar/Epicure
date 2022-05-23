@@ -12,7 +12,6 @@ public class ChoiceDTO {
     @NotNull
     private String title;
     @NotNull
-    @Size(min = 1)
     private List<String> options;
     @Min(0)
     private Integer minChoices;
