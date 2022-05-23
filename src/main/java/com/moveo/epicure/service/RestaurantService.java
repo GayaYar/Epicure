@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class RestaurantService {
 
-    public List<RestaurantDTO> getPopulars() {
+    public List<RestaurantDTO> getPopulars(Integer amount) {
         //to do
+        amount = (amount==null) ? 3 : amount;
         return null;
     }
 

@@ -21,9 +21,9 @@ public class RestaurantController {
     @Autowired
     private RestaurantService service;
 
-    @GetMapping(value = "/popular/{amount}")
-    public ResponseEntity<List<RestaurantDTO>> getPopularRestaurants(@PathVariable int amount) {
-        return ResponseEntity.ok(service.getPopulars());
+    @GetMapping(value = "/popular")
+    public ResponseEntity<List<RestaurantDTO>> getPopularRestaurants(@RequestParam(required = false) Integer amount) {
+        return ResponseEntity.ok(service.getPopulars(amount));
     }
 
     @GetMapping()
