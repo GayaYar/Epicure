@@ -15,5 +15,5 @@ public class RestaurantService {
     @Autowired
     private MealRepo mealRepo;
 
-    
+
 }
