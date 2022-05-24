@@ -31,5 +31,14 @@ public class Restaurant {
     private String img;
     @NotNull
     private boolean open;
+    @NotNull
+    private int popularity;
+    @NotNull
+    private double latitude;
+    @NotNull
+    private double longitude;
+    @NotNull
+    @Min(1) @Max(5)
+    private int price;
 
 }
