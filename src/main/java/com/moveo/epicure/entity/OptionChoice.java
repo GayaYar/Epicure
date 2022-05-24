@@ -19,7 +19,4 @@ public class OptionChoice {
     private Integer id;
     @NotNull
     private String option;
-    @NotNull
-    @ManyToOne
-    private Choice choice;
 }
