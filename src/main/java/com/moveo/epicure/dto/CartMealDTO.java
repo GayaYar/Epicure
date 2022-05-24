@@ -14,7 +14,7 @@ public class CartMealDTO {
     @NotNull
     @Min(0)
     private double mealPrice;
-    private List<String> choices;
+    private List<OptionDTO> chosenOptions;
     @NotNull
     @Min(1)
     private int amount;

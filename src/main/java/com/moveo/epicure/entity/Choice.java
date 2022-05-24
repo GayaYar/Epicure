@@ -30,6 +30,6 @@ public class Choice {
     private Meal meal;
     @OneToMany(fetch = FetchType.EAGER)
     @NotNull
-    private List<OptionChoice> options;
+    private List<Option> options;
 
 }
