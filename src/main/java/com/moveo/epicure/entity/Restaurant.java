@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Data
@@ -28,6 +29,7 @@ public class Restaurant {
     @Min(0) @Max(5)
     private int rating;
     @NotNull
+    @URL
     private String img;
     @NotNull
     private boolean open;

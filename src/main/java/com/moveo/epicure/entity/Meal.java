@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Data
@@ -29,6 +30,7 @@ public class Meal {
     @Min(0)
     private double price;
     @NotNull
+    @URL
     private String img;
     @NotNull
     private String category;

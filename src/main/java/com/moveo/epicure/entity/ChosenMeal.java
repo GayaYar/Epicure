@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Data
@@ -25,6 +26,7 @@ public class ChosenMeal {
     @ManyToOne
     private Cart cart;
     @NotNull
+    @URL
     private String img;
     @NotNull
     @Min(0)

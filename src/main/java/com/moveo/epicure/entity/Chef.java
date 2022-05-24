@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 public class Chef {
@@ -17,6 +18,7 @@ public class Chef {
     @NotNull
     private String description;
     @NotNull
+    @URL
     private String img;
 
 }
