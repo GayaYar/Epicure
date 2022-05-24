@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface RestaurantRepo extends JpaRepository<Restaurant, Integer> {
     List<Restaurant> findTop3ByOrderByPopularityDesc();
-    
+
     @Query("SELECT r FROM Restaurant r WHERE r.price >= :minPrice and r.price <= :maxPrice  and "
             + "SQRT((r.longitude-:longitude)*(r.longitude-:longitude) + (r.latitude-:latitude)*(r.latitude-:latitude))"
             + "<=:distance and (r.open = true or r.open = :open) and r.rating = :rating")
