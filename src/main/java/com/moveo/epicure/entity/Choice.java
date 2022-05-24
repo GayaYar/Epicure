@@ -1,4 +1,4 @@
-package com.moveo.epicure.bean;
+package com.moveo.epicure.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,27 +13,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class ChosenMeal {
+public class Choice {
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    @NotNull
-    @ManyToOne
-    private Meal meal;
-    @NotNull
-    @ManyToOne
-    private Cart cart;
-    @NotNull
-    private String img;
-    @NotNull
     @Min(0)
-    private double mealPrice;
-    @NotNull
+    private Integer minChoices;
     @Min(1)
-    private int amount;
+    private Integer maxChoices;
+    @ManyToOne
     @NotNull
-    @Min(0)
-    private double finalPrice;
+    private Meal meal;
 
 }

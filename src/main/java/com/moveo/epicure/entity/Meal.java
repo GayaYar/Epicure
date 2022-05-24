@@ -1,4 +1,4 @@
-package com.moveo.epicure.bean;
+package com.moveo.epicure.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
