@@ -28,9 +28,6 @@ public class ChosenMeal {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Option> chosenOptions;
     @NotNull
-    @ManyToOne
-    private Cart cart;
-    @NotNull
     @URL
     private String img;
     @NotNull
