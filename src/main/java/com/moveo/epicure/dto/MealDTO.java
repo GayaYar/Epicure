@@ -5,9 +5,11 @@ import com.moveo.epicure.model.Label;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class MealDTO {
     @NotNull
     @Min(1)

@@ -1,13 +1,26 @@
 package com.moveo.epicure.util;
 
+import static java.util.stream.Collectors.groupingBy;
+
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.ChoiceDTO;
+import com.moveo.epicure.dto.MealBriefDTO;
+import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.OptionDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
+import com.moveo.epicure.dto.RestaurantDTO;
+import com.moveo.epicure.dto.RestaurantMeals;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.ChosenMeal;
+import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Option;
+import com.moveo.epicure.entity.Restaurant;
+import com.moveo.epicure.model.Label;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DtoMapper {
@@ -30,5 +43,55 @@ public class DtoMapper {
     public static ChoiceDTO choiceToDto(Choice choice) {
         return new ChoiceDTO(choice.getTitle(), choice.getOptions().stream().map(option -> {return optionToDto(option);})
                 .collect(Collectors.toList()), choice.getMinChoices(), choice.getMaxChoices());
+    }
+
+    public static MealBriefDTO mealToBriefDto(Meal meal) {
+        return new MealBriefDTO(meal.getId(), meal.getName(), meal.getDescription(), meal.getPrice(), meal.getImg());
+    }
+
+    public static MealDTO mealToDto(Meal meal, List<Choice> choices) {
+        return new MealDTO(meal.getId(), meal.getName(), meal.getDescription(), turnLabelsToList(meal.isSpicy(),
+                meal.isVegan(), meal.isGlutenFree()), meal.getPrice(), choices.stream()
+                .map(choice -> {return choiceToDto(choice);}).collect(Collectors.toList()), meal.getImg());
+    }
+
+    public static RestaurantBriefDTO restaurantToBriefDto(Restaurant restaurant) {
+        return new RestaurantBriefDTO(restaurant.getId(), restaurant.getName(), restaurant.getChef().getName(),
+                restaurant.getRating(), restaurant.getImg());
+    }
+
+    public static RestaurantDTO restaurantToDto(Restaurant restaurant, List<Meal> meals) {
+        return new RestaurantDTO(restaurant.getId(), restaurant.getName(), restaurant.getChef().getName(),
+                restaurant.getRating(), restaurant.getImg(), restaurant.isOpen(), mealsToRestaurantMeals(meals));
+    }
+
+    /**
+     * turns the least to a map of key=category, value=list of meals in that category
+     * then, turns the map to a list of restaurant meals
+     * @param meals - all the meals of restaurant
+     * @return a list of restaurant meals (dto)
+     */
+    public static List<RestaurantMeals> mealsToRestaurantMeals(List<Meal> meals) {
+        List<RestaurantMeals> restMeals = new ArrayList<>();
+        Map<String, List<Meal>> restMealMap = meals.stream().collect(groupingBy(Meal::getCategory));
+        for (Map.Entry<String, List<Meal>> entry : restMealMap.entrySet()) {
+            restMeals.add(new RestaurantMeals(entry.getKey(),
+                    entry.getValue().stream().map(meal -> {return mealToBriefDto(meal);}).collect(Collectors.toList())));
+        }
+        return restMeals;
+    }
+
+    private static List<Label> turnLabelsToList(boolean spicy, boolean vegan, boolean glutenFree) {
+        List<Label> labels = new ArrayList<>(3);
+        if(spicy) {
+            labels.add(Label.SPICY);
+        }
+        if(vegan) {
+            labels.add(Label.VEGAN);
+        }
+        if (glutenFree) {
+            labels.add(Label.GLUTEN_FREE);
+        }
+        return labels;
     }
 }
