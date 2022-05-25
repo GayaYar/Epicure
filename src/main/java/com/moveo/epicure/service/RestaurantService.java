@@ -3,8 +3,10 @@ package com.moveo.epicure.service;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RestaurantDTO;
 import com.moveo.epicure.dto.RestaurantBriefDTO;
+import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;
+import com.moveo.epicure.repo.ChoiceRepo;
 import com.moveo.epicure.util.DtoMapper;
 import java.util.Comparator;
 import java.util.List;
@@ -24,6 +26,8 @@ public class RestaurantService {
     private RestaurantRepoImpl restaurantRepoImpl;
     @Autowired
     private MealRepo mealRepo;
+    @Autowired
+    private ChoiceRepo choiceRepo;
 
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
         List<Restaurant> populars;
@@ -77,12 +81,20 @@ public class RestaurantService {
     }
 
     public Optional<RestaurantDTO> findById(Integer id) {
-        //to do
-        return null;
+        Optional<Restaurant> optionalRest = restaurantRepo.findById(id);
+        if(optionalRest.isEmpty()) {
+            return Optional.empty();
+        }
+        Restaurant restaurant = optionalRest.get();
+        return Optional.of(DtoMapper.restaurantToDto(restaurant, mealRepo.findByRestaurant(restaurant)));
     }
 
     public Optional<MealDTO> findMeal(Integer id) {
-        //to do
-        return null;
+        Optional<Meal> optionalMeal = mealRepo.findById(id);
+        if(optionalMeal.isEmpty()){
+            return Optional.empty();
+        }
+        Meal meal = optionalMeal.get();
+        return Optional.of(DtoMapper.mealToDto(meal, choiceRepo.findByMeal(meal)));
     }
 }
