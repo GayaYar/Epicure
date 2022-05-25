@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.URL;
 @Entity
 public class Chef {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull

@@ -18,9 +18,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Choice {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    @NotNull
+    private String title;
     @Min(0)
     private Integer minChoices;
     @Min(1)

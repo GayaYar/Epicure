@@ -2,8 +2,10 @@ package com.moveo.epicure.util;
 
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
+import com.moveo.epicure.dto.ChoiceDTO;
 import com.moveo.epicure.dto.OptionDTO;
 import com.moveo.epicure.entity.Cart;
+import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Option;
 import java.util.stream.Collectors;
@@ -22,7 +24,11 @@ public class DtoMapper {
     }
 
     public static OptionDTO optionToDto(Option option) {
-        //to do
-        return null;
+        return new OptionDTO(option.getId(), option.getOption());
+    }
+
+    public static ChoiceDTO choiceToDto(Choice choice) {
+        return new ChoiceDTO(choice.getTitle(), choice.getOptions().stream().map(option -> {return optionToDto(option);})
+                .collect(Collectors.toList()), choice.getMinChoices(), choice.getMaxChoices());
     }
 }

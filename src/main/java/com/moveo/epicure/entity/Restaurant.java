@@ -17,7 +17,6 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor
 public class Restaurant {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull
