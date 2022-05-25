@@ -4,6 +4,7 @@ import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
+import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.CustomerService;
 import java.util.Optional;
@@ -63,7 +64,7 @@ public class CustomerController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginInfo info) {
         Optional<LoginResponse> optionalResponse = service.login(info);
         if(optionalResponse.isEmpty()) {
-            throw new NotFoundException();
+            throw new IncorrectLoginException();
         }
         return ResponseEntity.ok(optionalResponse.get());
     }

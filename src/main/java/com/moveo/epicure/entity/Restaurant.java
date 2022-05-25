@@ -1,10 +1,13 @@
 package com.moveo.epicure.entity;
 
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -41,5 +44,8 @@ public class Restaurant {
     @NotNull
     @Min(1) @Max(5)
     private int price;
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creation;
 
 }

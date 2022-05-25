@@ -1,4 +1,4 @@
-package com.moveo.epicure.model;
+package com.moveo.epicure.entity;
 
 public enum Label {
     SPICY, VEGAN, GLUTEN_FREE

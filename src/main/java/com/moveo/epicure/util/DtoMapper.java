@@ -17,7 +17,7 @@ import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Option;
 import com.moveo.epicure.entity.Restaurant;
-import com.moveo.epicure.model.Label;
+import com.moveo.epicure.entity.Label;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

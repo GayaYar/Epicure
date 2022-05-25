@@ -13,7 +13,7 @@ public interface RestaurantRepo extends JpaRepository<Restaurant, Integer> {
 
     @Query("SELECT r FROM Restaurant r WHERE r.price >= :minPrice and r.price <= :maxPrice  and "
             + "SQRT((r.longitude-:longitude)*(r.longitude-:longitude) + (r.latitude-:latitude)*(r.latitude-:latitude))"
-            + "<=:distance and (r.open = true or r.open = :open) and r.rating = :rating")
+            + "<=:distance and (r.open = true or r.open = :open) and r.rating >= :rating")
     List<Restaurant> findByParams(@Param("minPrice") int minPrice, @Param("maxPrice") int maxPrice
             , @Param("longitude") double longitude, @Param("latitude") double latitude, @Param("distance") int distance
             , @Param("open") boolean open, @Param("rating") int rating);

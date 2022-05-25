@@ -1,7 +1,7 @@
 package com.moveo.epicure.dto;
 
 
-import com.moveo.epicure.model.Label;
+import com.moveo.epicure.entity.Label;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

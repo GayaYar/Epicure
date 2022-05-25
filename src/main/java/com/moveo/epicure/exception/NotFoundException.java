@@ -1,5 +1,8 @@
 package com.moveo.epicure.exception;
 
 public class NotFoundException extends RuntimeException {
-//to do
+
+    public NotFoundException(String objName) {
+        super("Could not find the "+objName+" you were looking for.");
+    }
 }
