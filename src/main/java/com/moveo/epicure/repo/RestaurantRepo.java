@@ -2,6 +2,7 @@ package com.moveo.epicure.repo;
 
 import com.moveo.epicure.entity.Restaurant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,7 @@ public interface RestaurantRepo extends JpaRepository<Restaurant, Integer> {
     List<Restaurant> findByParams(@Param("minPrice") int minPrice, @Param("maxPrice") int maxPrice
             , @Param("longitude") double longitude, @Param("latitude") double latitude, @Param("distance") int distance
             , @Param("open") boolean open, @Param("rating") int rating);
+
+    @Query("SELECT r FROM Restaurant r JOIN FETCH r.meals WHERE r.id=:id")
+    Optional<Restaurant> findRestaurantWithMeals(@Param("id") Integer id);
 }

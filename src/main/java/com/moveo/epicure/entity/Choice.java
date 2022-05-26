@@ -26,9 +26,6 @@ public class Choice {
     private Integer minChoices;
     @Min(1)
     private Integer maxChoices;
-    @ManyToOne
-    @NotNull
-    private Meal meal;
     @OneToMany(fetch = FetchType.EAGER)
     @NotNull
     private List<Option> options;

@@ -49,10 +49,11 @@ public class DtoMapper {
         return new MealBriefDTO(meal.getId(), meal.getName(), meal.getDescription(), meal.getPrice(), meal.getImg());
     }
 
-    public static MealDTO mealToDto(Meal meal, List<Choice> choices) {
-        return new MealDTO(meal.getId(), meal.getName(), meal.getDescription(), turnLabelsToList(meal.isSpicy(),
-                meal.isVegan(), meal.isGlutenFree()), meal.getPrice(), choices.stream()
-                .map(choice -> {return choiceToDto(choice);}).collect(Collectors.toList()), meal.getImg());
+    public static MealDTO mealToDto(Meal mealWithChoices) {
+        return new MealDTO(mealWithChoices.getId(), mealWithChoices.getName(), mealWithChoices.getDescription()
+                , turnLabelsToList(mealWithChoices.isSpicy(), mealWithChoices.isVegan(), mealWithChoices.isGlutenFree())
+                , mealWithChoices.getPrice(), mealWithChoices.getChoices().stream()
+                .map(choice -> {return choiceToDto(choice);}).collect(Collectors.toList()), mealWithChoices.getImg());
     }
 
     public static RestaurantBriefDTO restaurantToBriefDto(Restaurant restaurant) {
@@ -60,9 +61,10 @@ public class DtoMapper {
                 restaurant.getRating(), restaurant.getImg());
     }
 
-    public static RestaurantDTO restaurantToDto(Restaurant restaurant, List<Meal> meals) {
-        return new RestaurantDTO(restaurant.getId(), restaurant.getName(), restaurant.getChef().getName(),
-                restaurant.getRating(), restaurant.getImg(), restaurant.isOpen(), mealsToRestaurantMeals(meals));
+    public static RestaurantDTO restaurantToDto(Restaurant restaurantWithMeals) {
+        return new RestaurantDTO(restaurantWithMeals.getId(), restaurantWithMeals.getName()
+                , restaurantWithMeals.getChef().getName(), restaurantWithMeals.getRating(), restaurantWithMeals.getImg()
+                , restaurantWithMeals.isOpen(), mealsToRestaurantMeals(restaurantWithMeals.getMeals()));
     }
 
     /**

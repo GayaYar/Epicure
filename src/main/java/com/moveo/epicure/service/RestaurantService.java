@@ -63,7 +63,6 @@ public class RestaurantService {
                         , longitude==null?0:longitude, latitude==null?0:latitude, distance==null?Integer.MAX_VALUE:distance
                         , open, rating == null ? 1 : rating)
                 .stream().sorted(restaurantComparator(newest)).map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
-
     }
 
     private Comparator<Restaurant> restaurantComparator(Boolean newest) {
@@ -81,20 +80,12 @@ public class RestaurantService {
     }
 
     public Optional<RestaurantDTO> findById(Integer id) {
-        Optional<Restaurant> optionalRest = restaurantRepo.findById(id);
-        if(optionalRest.isEmpty()) {
-            return Optional.empty();
-        }
-        Restaurant restaurant = optionalRest.get();
-        return Optional.of(DtoMapper.restaurantToDto(restaurant, mealRepo.findByRestaurant(restaurant)));
+        Optional<Restaurant> optionalRest = restaurantRepo.findRestaurantWithMeals(id);
+        return optionalRest.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.restaurantToDto(optionalRest.get()));
     }
 
     public Optional<MealDTO> findMeal(Integer id) {
-        Optional<Meal> optionalMeal = mealRepo.findById(id);
-        if(optionalMeal.isEmpty()){
-            return Optional.empty();
-        }
-        Meal meal = optionalMeal.get();
-        return Optional.of(DtoMapper.mealToDto(meal, choiceRepo.findByMeal(meal)));
+        Optional<Meal> optionalMeal = mealRepo.findMealWithChoices(id);
+        return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
     }
 }
