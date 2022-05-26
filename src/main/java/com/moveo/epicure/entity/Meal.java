@@ -35,8 +35,5 @@ public class Meal {
     private String img;
     @NotNull
     private String category;
-    @NotNull
-    @ManyToOne
-    private Restaurant restaurant;
 
 }

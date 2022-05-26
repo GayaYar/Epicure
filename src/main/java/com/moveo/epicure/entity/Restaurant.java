@@ -1,11 +1,14 @@
 package com.moveo.epicure.entity;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
@@ -47,5 +50,7 @@ public class Restaurant {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date creation;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Meal> meals;
 
 }
