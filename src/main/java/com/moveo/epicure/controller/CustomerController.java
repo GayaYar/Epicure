@@ -4,6 +4,7 @@ import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
+import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.CustomerService;
 import java.util.Optional;
@@ -32,20 +33,20 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart")
-    public ResponseEntity<CartDTO> updateCart(@RequestBody CartDTO cart) {
-        return ResponseEntity.ok(service.updateCart(cart));
+    public ResponseEntity<Void> updateCart(@RequestBody String cartComment) {
+        service.updateCartComment(cartComment);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value="/order")
-    public ResponseEntity<Void> buyCart(@RequestBody CartDTO cart) {
-        service.buyCart(cart);
+    public ResponseEntity<Void> buyCart() {
+        service.buyCart();
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/cart/meal")
-    public ResponseEntity<Void> addToCart(@RequestBody CartMealDTO meal) {
-        service.addToCart(meal);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CartMealDTO> addToCart(@RequestBody MealDTO meal) {
+        return ResponseEntity.ok(service.addToCart(meal));
     }
 
     @DeleteMapping(value = "/cart/meal")
@@ -63,7 +64,7 @@ public class CustomerController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginInfo info) {
         Optional<LoginResponse> optionalResponse = service.login(info);
         if(optionalResponse.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("user");
         }
         return ResponseEntity.ok(optionalResponse.get());
     }

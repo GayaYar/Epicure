@@ -22,4 +22,7 @@ public class MealDTO {
     private List<ChoiceDTO> choices;
     @NotNull
     private String img;
+    @NotNull
+    @Min(1)
+    private int quantity;
 }

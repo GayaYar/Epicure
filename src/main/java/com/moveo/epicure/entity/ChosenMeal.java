@@ -19,7 +19,6 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor
 public class ChosenMeal {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull
@@ -27,9 +26,6 @@ public class ChosenMeal {
     private Meal meal;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Option> chosenOptions;
-    @NotNull
-    @ManyToOne
-    private Cart cart;
     @NotNull
     @URL
     private String img;
@@ -42,5 +38,18 @@ public class ChosenMeal {
     @NotNull
     @Min(0)
     private double finalPrice;
+    @NotNull
+    @ManyToOne
+    private Cart cart;
 
+    public ChosenMeal(List<Option> chosenOptions, String img, double mealPrice, int amount, double finalPrice
+            , Meal meal, Cart cart) {
+        this.chosenOptions = chosenOptions;
+        this.img = img;
+        this.mealPrice = mealPrice;
+        this.amount = amount;
+        this.finalPrice = finalPrice;
+        this.meal = meal;
+        this.cart = cart;
+    }
 }
