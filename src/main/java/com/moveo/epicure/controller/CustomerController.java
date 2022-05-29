@@ -5,6 +5,7 @@ import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.CustomerService;
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponse> signup(@Valid @RequestBody LoginInfo info) {
+    public ResponseEntity<LoginResponse> signup(@Valid @RequestBody RegisterInfo info) {
         return ResponseEntity.ok(service.signup(info));
     }
 

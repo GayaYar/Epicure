@@ -7,6 +7,7 @@ import com.moveo.epicure.dto.CustomerDetail;
 import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
@@ -107,13 +108,14 @@ public class CustomerService {
                 info.getPassword());
         if(optionalCustomer.isPresent()) {
             Customer customer = optionalCustomer.get();
-            return Optional.of(LoginResponseMaker.make(customer.getId(), customer.getName()));
+            return Optional.of(LoginResponseMaker.make(customer));
         }
         return Optional.empty();
     }
 
-    public LoginResponse signup(LoginInfo info) {
-        //to do
-        return null;
+    public LoginResponse signup(RegisterInfo info) {
+        LoginInfo loginInfo = info.getLoginInfo();
+        Customer customer = customerRepo.save(new Customer(info.getName(), loginInfo.getEmail(), loginInfo.getPassword()));
+        return LoginResponseMaker.make(customer);
     }
 }
