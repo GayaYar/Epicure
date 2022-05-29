@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
@@ -19,7 +20,6 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @ManyToOne
-    @NotNull
     private Restaurant restaurant;
     @NotNull
     private boolean current;
@@ -32,4 +32,10 @@ public class Cart {
     @NotNull
     private Customer customer;
 
+    public Cart(boolean current, Customer customer) {
+        this.current = current;
+        this.comment = "";
+        this.overallPrice = 0;
+        this.customer = customer;
+    }
 }

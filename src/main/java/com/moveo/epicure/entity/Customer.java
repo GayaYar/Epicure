@@ -28,4 +28,7 @@ public class Customer {
     @Size(min = 4)
     private String password;
 
+    public Customer(Integer id) {
+        this.id = id;
+    }
 }
