@@ -1,5 +1,9 @@
 package com.moveo.epicure.dto;
 
-public class LoginResponse {
+import lombok.Data;
 
+@Data
+public class LoginResponse {
+    private String name;
+    private String jwtToken;
 }

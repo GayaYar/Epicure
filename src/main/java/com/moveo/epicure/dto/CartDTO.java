@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CartDTO {
     @NotNull
-    private String restaurantName;
-    @NotNull
     private List<CartMealDTO> meals;
     @NotNull
     private String comment;

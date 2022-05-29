@@ -91,11 +91,14 @@ public class CustomerService {
     }
 
     public void deleteFromCart(Integer mealId) {
-        //to do
+        chosenMealRepo.deleteByIdAndCart(mealId, getCurrentCart(false));
     }
 
     public void clearCart() {
-        //to do
+        Cart currentCart = getCurrentCart(false);
+        chosenMealRepo.deleteByCart(currentCart);
+        currentCart.defaultValues();
+        cartRepo.save(currentCart);
     }
 
     public Optional<LoginResponse> login(LoginInfo info) {

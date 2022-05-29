@@ -23,8 +23,6 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    @ManyToOne
-    private Restaurant restaurant;
     @NotNull
     private boolean current;
     @NotNull
@@ -40,13 +38,17 @@ public class Cart {
 
     public Cart(boolean current, Customer customer) {
         this.current = current;
-        this.comment = "";
-        this.overallPrice = 0;
         this.customer = customer;
-        this.chosenMeals = new ArrayList<>();
+        defaultValues();
     }
 
     public Cart(Integer id) {
         this.id = id;
+    }
+
+    public void defaultValues() {
+        this.chosenMeals = new ArrayList<>();
+        this.comment = "";
+        this.overallPrice = 0;
     }
 }
