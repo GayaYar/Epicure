@@ -7,6 +7,7 @@ import com.moveo.epicure.repo.ChefRepo;
 import com.moveo.epicure.util.DtoMapper;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,9 @@ public class ChefService {
         return Optional.empty();
     }
 
-    public List<ChefBriefDTO> getChefsByParams(boolean newest, boolean viewed) {
-        return null;
+    public List<ChefBriefDTO> getChefsByOrder(Boolean newest) {
+        List<Chef> chefs = (newest!=null && newest==true) ? chefRepo.findByOrderByAddingDateDescViewsDesc() :
+                chefRepo.findByOrderByViewsDesc();
+        return chefs.stream().map(chef -> DtoMapper.chefToBrief(chef)).collect(Collectors.toList());
     }
 }

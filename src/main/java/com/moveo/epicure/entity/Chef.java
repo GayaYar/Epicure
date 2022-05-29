@@ -1,5 +1,6 @@
 package com.moveo.epicure.entity;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,5 +34,7 @@ public class Chef {
     @NotNull
     @Min(0)
     private int views;
+    @NotNull
+    private Date addingDate;
 
 }
