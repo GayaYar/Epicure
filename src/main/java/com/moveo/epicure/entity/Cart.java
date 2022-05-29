@@ -47,7 +47,7 @@ public class Cart {
     }
 
     public void defaultValues() {
-        this.chosenMeals = new ArrayList<>();
+        this.chosenMeals = null;
         this.comment = "";
         this.overallPrice = 0;
     }

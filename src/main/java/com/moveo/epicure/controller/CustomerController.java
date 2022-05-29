@@ -8,6 +8,7 @@ import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.CustomerService;
 import java.util.Optional;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart")
-    public ResponseEntity<Void> updateCart(@RequestBody String cartComment) {
+    public ResponseEntity<Void> updateCart(@Valid @RequestBody String cartComment) {
         service.updateCartComment(cartComment);
         return ResponseEntity.ok().build();
     }
@@ -45,7 +46,7 @@ public class CustomerController {
     }
 
     @PostMapping(value = "/cart/meal")
-    public ResponseEntity<CartMealDTO> addToCart(@RequestBody MealDTO meal) {
+    public ResponseEntity<CartMealDTO> addToCart(@Valid @RequestBody MealDTO meal) {
         return ResponseEntity.ok(service.addToCart(meal));
     }
 
@@ -61,7 +62,7 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginInfo info) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginInfo info) {
         Optional<LoginResponse> optionalResponse = service.login(info);
         if(optionalResponse.isEmpty()) {
             throw new NotFoundException("user");
@@ -70,7 +71,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponse> signup(@RequestBody LoginInfo info) {
+    public ResponseEntity<LoginResponse> signup(@Valid @RequestBody LoginInfo info) {
         return ResponseEntity.ok(service.signup(info));
     }
 

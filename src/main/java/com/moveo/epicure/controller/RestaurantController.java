@@ -41,7 +41,7 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDTO> findById(@PathVariable Integer id) {
         Optional<RestaurantDTO> optionalRestaurant = service.findById(id);
         if(optionalRestaurant.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("restaurant");
         }
         return ResponseEntity.ok(optionalRestaurant.get());
     }
@@ -50,7 +50,7 @@ public class RestaurantController {
     public ResponseEntity<MealDTO> getMeal(@PathVariable Integer id) {
         Optional<MealDTO> optionalMeal = service.findMeal(id);
         if(optionalMeal.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("meal");
         }
         return ResponseEntity.ok(optionalMeal.get());
     }
