@@ -1,5 +1,6 @@
 package com.moveo.epicure.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class Customer {
     private String name;
     @NotNull
     @Pattern(regexp = "^(.+)@(\\S+)$", message = "invalid email address")
+    @Column(unique = true)
     private String email;
     @NotNull
     @Size(min = 4)

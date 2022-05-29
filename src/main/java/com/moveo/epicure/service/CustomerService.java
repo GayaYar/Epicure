@@ -18,6 +18,7 @@ import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
+import com.moveo.epicure.util.LoginResponseMaker;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,8 +103,13 @@ public class CustomerService {
     }
 
     public Optional<LoginResponse> login(LoginInfo info) {
-        //to do
-        return null;
+        Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail(),
+                info.getPassword());
+        if(optionalCustomer.isPresent()) {
+            Customer customer = optionalCustomer.get();
+            return Optional.of(LoginResponseMaker.make(customer.getId(), customer.getName()));
+        }
+        return Optional.empty();
     }
 
     public LoginResponse signup(LoginInfo info) {
