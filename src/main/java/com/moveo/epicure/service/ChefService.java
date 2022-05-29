@@ -3,6 +3,7 @@ package com.moveo.epicure.service;
 import com.moveo.epicure.dto.ChefBriefDTO;
 import com.moveo.epicure.dto.ChefDTO;
 import com.moveo.epicure.entity.Chef;
+import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.ChefRepo;
 import com.moveo.epicure.util.DtoMapper;
 import java.util.List;
@@ -31,5 +32,15 @@ public class ChefService {
         List<Chef> chefs = (newest!=null && newest==true) ? chefRepo.findByOrderByAddingDateDescViewsDesc() :
                 chefRepo.findByOrderByViewsDesc();
         return chefs.stream().map(chef -> DtoMapper.chefToBrief(chef)).collect(Collectors.toList());
+    }
+
+    public void addView(Integer chefId, int views) {
+        Optional<Chef> optionalChef = chefRepo.findById(chefId);
+        if(optionalChef.isEmpty()) {
+            throw new NotFoundException("chef");
+        }
+        Chef chef = optionalChef.get();
+        chef.addViews(views);
+        chefRepo.save(chef);
     }
 }

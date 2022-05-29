@@ -37,4 +37,8 @@ public class Chef {
     @NotNull
     private Date addingDate;
 
+    public void addViews(int amount) {
+        views+=amount;
+    }
+
 }
