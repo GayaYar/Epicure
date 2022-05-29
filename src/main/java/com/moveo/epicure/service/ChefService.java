@@ -19,6 +19,7 @@ public class ChefService {
     @Autowired
     private ChefRepo chefRepo;
 
+    @Transactional(readOnly = true)
     public Optional<ChefDTO> findChefById(Integer id) {
         Optional<Chef> optionalChef = chefRepo.findByIdWithRestaurants(id);
         if(optionalChef.isPresent()) {
@@ -28,13 +29,14 @@ public class ChefService {
         return Optional.empty();
     }
 
+    @Transactional(readOnly = true)
     public List<ChefBriefDTO> getChefsByOrder(Boolean newest) {
         List<Chef> chefs = (newest!=null && newest==true) ? chefRepo.findByOrderByAddingDateDescViewsDesc() :
                 chefRepo.findByOrderByViewsDesc();
         return chefs.stream().map(chef -> DtoMapper.chefToBrief(chef)).collect(Collectors.toList());
     }
 
-    public void addView(Integer chefId, int views) {
+    public void addViews(Integer chefId, int views) {
         Optional<Chef> optionalChef = chefRepo.findById(chefId);
         if(optionalChef.isEmpty()) {
             throw new NotFoundException("chef");
