@@ -17,8 +17,10 @@ import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RestaurantService {
     @Autowired
     private RestaurantRepo restaurantRepo;
@@ -29,6 +31,7 @@ public class RestaurantService {
     @Autowired
     private ChoiceRepo choiceRepo;
 
+    @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
         List<Restaurant> populars;
         if(amount == null || amount == 3) {
@@ -39,6 +42,7 @@ public class RestaurantService {
         return populars.stream().map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     /**
      * get all restaurants withing the restrictions specified by the variables
      * sorts the list by newest (if newest == true) and by popularity
@@ -79,11 +83,13 @@ public class RestaurantService {
         return restaurantComparator;
     }
 
+    @Transactional(readOnly = true)
     public Optional<RestaurantDTO> findById(Integer id) {
         Optional<Restaurant> optionalRest = restaurantRepo.findRestaurantWithMeals(id);
         return optionalRest.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.restaurantToDto(optionalRest.get()));
     }
 
+    @Transactional(readOnly = true)
     public Optional<MealDTO> findMeal(Integer id) {
         Optional<Meal> optionalMeal = mealRepo.findMealWithChoices(id);
         return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
