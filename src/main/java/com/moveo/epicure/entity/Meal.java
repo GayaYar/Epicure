@@ -1,9 +1,14 @@
 package com.moveo.epicure.entity;
 
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -33,6 +38,8 @@ public class Meal {
     private String img;
     @NotNull
     private String category;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Choice> choices;
 
     public Meal(Integer id) {
         this.id = id;

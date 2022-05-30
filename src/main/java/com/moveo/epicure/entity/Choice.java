@@ -18,16 +18,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Choice {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    @NotNull
+    private String title;
     @Min(0)
     private Integer minChoices;
     @Min(1)
     private Integer maxChoices;
-    @ManyToOne
-    @NotNull
-    private Meal meal;
     @OneToMany(fetch = FetchType.EAGER)
     @NotNull
     private List<Option> options;

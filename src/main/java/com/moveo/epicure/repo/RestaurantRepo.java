@@ -18,6 +18,8 @@ public interface RestaurantRepo extends JpaRepository<Restaurant, Integer> {
             , @Param("longitude") double longitude, @Param("latitude") double latitude, @Param("distance") int distance
             , @Param("open") boolean open, @Param("rating") int rating);
 
+    @Query("SELECT r FROM Restaurant r JOIN FETCH r.meals WHERE r.id=:id")
+    Optional<Restaurant> findRestaurantWithMeals(@Param("id") Integer id);
 
     Optional<Integer> findIdByName(String name);
 }

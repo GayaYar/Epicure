@@ -1,15 +1,16 @@
 package com.moveo.epicure.dto;
 
 
-import com.moveo.epicure.model.Label;
+import com.moveo.epicure.entity.Label;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class MealDTO {
     @NotNull
     @Min(1)
