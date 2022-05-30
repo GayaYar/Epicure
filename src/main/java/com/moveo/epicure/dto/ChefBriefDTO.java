@@ -1,20 +1,22 @@
 package com.moveo.epicure.dto;
 
-import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @Data
 @AllArgsConstructor
-public class CartDTO {
+@NoArgsConstructor
+public class ChefBriefDTO {
     @NotNull
-    private List<CartMealDTO> meals;
+    @Min(1)
+    private Integer id;
     @NotNull
-    private String comment;
+    private String name;
     @NotNull
-    @Min(0)
-    private double overallPrice;
+    @URL
+    private String img;
 }

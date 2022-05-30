@@ -5,9 +5,12 @@ import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.exception.IncorrectLoginException;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.CustomerService;
 import java.util.Optional;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,20 +36,19 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart")
-    public ResponseEntity<CartDTO> updateCart(@RequestBody CartDTO cart) {
-        return ResponseEntity.ok(service.updateCart(cart));
+    public ResponseEntity<CartDTO> updateCart(@Valid @RequestBody String cartComment) {
+        return ResponseEntity.ok(service.updateCartComment(cartComment));
     }
 
     @PostMapping(value="/order")
-    public ResponseEntity<Void> buyCart(@RequestBody CartDTO cart) {
-        service.buyCart(cart);
+    public ResponseEntity<Void> buyCart() {
+        service.buyCart();
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/cart/meal")
-    public ResponseEntity<Void> addToCart(@RequestBody CartMealDTO meal) {
-        service.addToCart(meal);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CartMealDTO> addToCart(@Valid @RequestBody MealDTO meal) {
+        return ResponseEntity.ok(service.addToCart(meal));
     }
 
     @DeleteMapping(value = "/cart/meal")
@@ -61,7 +63,7 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginInfo info) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginInfo info) {
         Optional<LoginResponse> optionalResponse = service.login(info);
         if(optionalResponse.isEmpty()) {
             throw new IncorrectLoginException();
@@ -70,7 +72,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponse> signup(@RequestBody LoginInfo info) {
+    public ResponseEntity<LoginResponse> signup(@Valid @RequestBody RegisterInfo info) {
         return ResponseEntity.ok(service.signup(info));
     }
 

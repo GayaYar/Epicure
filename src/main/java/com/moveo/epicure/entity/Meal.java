@@ -41,4 +41,7 @@ public class Meal {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Choice> choices;
 
+    public Meal(Integer id) {
+        this.id = id;
+    }
 }
