@@ -5,14 +5,16 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ChoiceDTO {
 
     @NotNull
     private String title;
     @NotNull
-    private List<String> options;
+    private List<OptionDTO> options;
     @Min(0)
     private Integer minChoices;
     @Min(1)

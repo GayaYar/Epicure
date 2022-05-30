@@ -1,5 +1,6 @@
 package com.moveo.epicure.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +22,7 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull
+    @Column(unique = true)
     private String name;
     @NotNull
     @ManyToOne

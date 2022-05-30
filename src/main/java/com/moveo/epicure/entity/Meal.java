@@ -17,7 +17,6 @@ import org.hibernate.validator.constraints.URL;
 @AllArgsConstructor
 public class Meal {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull
@@ -35,4 +34,7 @@ public class Meal {
     @NotNull
     private String category;
 
+    public Meal(Integer id) {
+        this.id = id;
+    }
 }
