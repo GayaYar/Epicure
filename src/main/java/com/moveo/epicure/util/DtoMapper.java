@@ -11,10 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DtoMapper {
-    public static CartDTO cartToDto(Cart cart) {
-        //replace with mapper from dto branch
-        return null;
-    }
 
     public static List<Option> choiceDtosToOptions(List<ChoiceDTO> choiceDTOS) {
         return choiceDTOS.stream().flatMap(choiceDTO -> choiceDTO.getOptions().stream())
@@ -31,5 +27,13 @@ public class DtoMapper {
         return new CartMealDTO(chosenMeal.getId(), chosenMeal.getImg(), chosenMeal.getMealPrice()
                 , DtoMapper.optionsToDtos(chosenMeal.getChosenOptions()), chosenMeal.getAmount(),
                 chosenMeal.getFinalPrice());
+
+    public static ChefDTO chefToDto(Chef chefWithMeals) {
+        return new ChefDTO(chefWithMeals.getName(), chefWithMeals.getDescription(), chefWithMeals.getRestaurants().stream()
+                .map(restaurant -> restaurantToBrief(restaurant)).collect(Collectors.toList()), chefWithMeals.getImg());
+    }
+
+    public static ChefBriefDTO chefToBrief(Chef chef) {
+        return new ChefBriefDTO(chef.getId(), chef.getName(), chef.getImg());
     }
 }
