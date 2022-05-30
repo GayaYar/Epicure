@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.groupingBy;
 
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
+import com.moveo.epicure.dto.ChefBriefDTO;
+import com.moveo.epicure.dto.ChefDTO;
 import com.moveo.epicure.dto.ChoiceDTO;
 import com.moveo.epicure.dto.MealBriefDTO;
 import com.moveo.epicure.dto.MealDTO;
@@ -12,6 +14,7 @@ import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.dto.RestaurantDTO;
 import com.moveo.epicure.dto.RestaurantMeals;
 import com.moveo.epicure.entity.Cart;
+import com.moveo.epicure.entity.Chef;
 import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Meal;
@@ -21,27 +24,18 @@ import com.moveo.epicure.entity.Label;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import com.moveo.epicure.dto.CartDTO;
-import com.moveo.epicure.dto.CartMealDTO;
-import com.moveo.epicure.dto.ChoiceDTO;
-import com.moveo.epicure.dto.OptionDTO;
-import com.moveo.epicure.entity.Cart;
-import com.moveo.epicure.entity.ChosenMeal;
-import com.moveo.epicure.entity.Option;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class DtoMapper {
     public static CartDTO cartToDto(Cart cart) {
-        return new CartDTO(cart.getRestaurant().getName()
-                , cart.getChosenMeals().stream().map(chosenMeal -> {return chosenMealToCartMeal(chosenMeal);}).collect(
+        return new CartDTO(cart.getChosenMeals().stream().map(chosenMeal -> {return chosenMealToCartMeal(chosenMeal);}).collect(
                 Collectors.toList()), cart.getComment(), cart.getOverallPrice());
     }
 
-    public static CartMealDTO chosenMealToCartMeal(ChosenMeal chosen) {
-        return new CartMealDTO(chosen.getId(), chosen.getImg(), chosen.getMealPrice(),
-                chosen.getChosenOptions().stream().map(option -> {return optionToDto(option);}).collect(Collectors.toList())
-                , chosen.getAmount(), chosen.getFinalPrice());
+    public static CartMealDTO chosenMealToCartMeal(ChosenMeal chosenMeal) {
+        return new CartMealDTO(chosenMeal.getId(), chosenMeal.getImg(), chosenMeal.getMealPrice()
+                , DtoMapper.optionsToDtos(chosenMeal.getChosenOptions()), chosenMeal.getAmount(),
+                chosenMeal.getFinalPrice());
     }
 
     public static OptionDTO optionToDto(Option option) {
@@ -61,7 +55,7 @@ public class DtoMapper {
         return new MealDTO(mealWithChoices.getId(), mealWithChoices.getName(), mealWithChoices.getDescription()
                 , turnLabelsToList(mealWithChoices.isSpicy(), mealWithChoices.isVegan(), mealWithChoices.isGlutenFree())
                 , mealWithChoices.getPrice(), mealWithChoices.getChoices().stream()
-                .map(choice -> {return choiceToDto(choice);}).collect(Collectors.toList()), mealWithChoices.getImg());
+                .map(choice -> {return choiceToDto(choice);}).collect(Collectors.toList()), mealWithChoices.getImg(), 1);
     }
 
     public static RestaurantBriefDTO restaurantToBriefDto(Restaurant restaurant) {
@@ -93,16 +87,17 @@ public class DtoMapper {
 
     private static List<Label> turnLabelsToList(boolean spicy, boolean vegan, boolean glutenFree) {
         List<Label> labels = new ArrayList<>(3);
-        if(spicy) {
+        if (spicy) {
             labels.add(Label.SPICY);
         }
-        if(vegan) {
+        if (vegan) {
             labels.add(Label.VEGAN);
         }
         if (glutenFree) {
             labels.add(Label.GLUTEN_FREE);
         }
         return labels;
+    }
 
     public static List<Option> choiceDtosToOptions(List<ChoiceDTO> choiceDTOS) {
         return choiceDTOS.stream().flatMap(choiceDTO -> choiceDTO.getOptions().stream())
@@ -115,14 +110,11 @@ public class DtoMapper {
                 .collect(Collectors.toList());
     }
 
-    public static CartMealDTO chosenMealToCartMeal(ChosenMeal chosenMeal) {
-        return new CartMealDTO(chosenMeal.getId(), chosenMeal.getImg(), chosenMeal.getMealPrice()
-                , DtoMapper.optionsToDtos(chosenMeal.getChosenOptions()), chosenMeal.getAmount(),
-                chosenMeal.getFinalPrice());
+
 
     public static ChefDTO chefToDto(Chef chefWithMeals) {
         return new ChefDTO(chefWithMeals.getName(), chefWithMeals.getDescription(), chefWithMeals.getRestaurants().stream()
-                .map(restaurant -> restaurantToBrief(restaurant)).collect(Collectors.toList()), chefWithMeals.getImg());
+                .map(restaurant -> restaurantToBriefDto(restaurant)).collect(Collectors.toList()), chefWithMeals.getImg());
     }
 
     public static ChefBriefDTO chefToBrief(Chef chef) {
