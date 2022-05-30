@@ -23,8 +23,7 @@ public class ChefService {
     public Optional<ChefDTO> findChefById(Integer id) {
         Optional<Chef> optionalChef = chefRepo.findByIdWithRestaurants(id);
         if(optionalChef.isPresent()) {
-            Chef chef = optionalChef.get();
-            return Optional.of(DtoMapper.chefToDto(chef));
+            return Optional.of(DtoMapper.chefToDto(optionalChef.get()));
         }
         return Optional.empty();
     }
