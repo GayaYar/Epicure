@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,8 @@ public class CustomerService {
     private MealRepo mealRepo;
     @Autowired
     private ChosenMealRepo chosenMealRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Gets the customer's current cart.
@@ -104,18 +107,18 @@ public class CustomerService {
     }
 
     public Optional<LoginResponse> login(LoginInfo info) {
-        Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail(),
-                info.getPassword());
+        Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail()
+                , passwordEncoder.encode(info.getPassword()));
         if(optionalCustomer.isPresent()) {
-            Customer customer = optionalCustomer.get();
-            return Optional.of(LoginResponseMaker.make(customer));
+            return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
         }
         return Optional.empty();
     }
 
     public LoginResponse signup(RegisterInfo info) {
         LoginInfo loginInfo = info.getLoginInfo();
-        Customer customer = customerRepo.save(new Customer(info.getName(), loginInfo.getEmail(), loginInfo.getPassword()));
+        Customer customer = customerRepo.save(new Customer(info.getName(), loginInfo.getEmail()
+                , passwordEncoder.encode(loginInfo.getPassword())));
         return LoginResponseMaker.make(customer);
     }
 }
