@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 public class RestaurantServiceTest {
+
     private RestaurantService service;
     @Mock
     private RestaurantRepo restaurantRepo;
@@ -30,11 +31,12 @@ public class RestaurantServiceTest {
     @Mock
     private MealRepo mealRepo;
     private Restaurant mockRestaurant;
+    private Chef mockChef;
 
     @BeforeAll
     public void setUp() {
         service = new RestaurantService(restaurantRepo, restaurantRepoImpl, mealRepo);
-        Chef mockChef = new Chef(2, "yossi", "desc", "img", null, 1, new Date());
+        mockChef = new Chef(2, "yossi", "desc", "img", null, 1, new Date());
         mockRestaurant = new Restaurant(1, "name", mockChef, 1, "img", true, 10
                 , 1.5, 80.3, 2, new Date(), null);
     }
@@ -45,11 +47,11 @@ public class RestaurantServiceTest {
         Mockito.when(restaurantRepo.findTop3ByOrderByPopularityDesc()).thenReturn(Arrays.asList(mockRestaurant
                 , mockRestaurant, mockRestaurant));
         //checking returned list size is 3
-        assertTrue(service.getPopulars(null).size()==3);
+        assertTrue(service.getPopulars(null).size() == 3);
         //checking the repository is being called
         Mockito.verify(restaurantRepo, Mockito.times(1)).findTop3ByOrderByPopularityDesc();
         //checking returned list size is 3
-        assertTrue(service.getPopulars(3).size()==3);
+        assertTrue(service.getPopulars(3).size() == 3);
         //checking the repository is being called
         Mockito.verify(restaurantRepo, Mockito.times(1)).findTop3ByOrderByPopularityDesc();
         //checking the returned list is of the correct type
@@ -64,7 +66,7 @@ public class RestaurantServiceTest {
         Mockito.when(restaurantRepoImpl.findOrderByPopularityLimitedTo(5)).thenReturn(Arrays.asList(mockRestaurant
                 , mockRestaurant, mockRestaurant, mockRestaurant, mockRestaurant));
         //checking returned list size is 5
-        assertTrue(service.getPopulars(5).size()==5);
+        assertTrue(service.getPopulars(5).size() == 5);
         //checking the repository is being called
         Mockito.verify(restaurantRepoImpl, Mockito.times(1)).findOrderByPopularityLimitedTo(5);
         //checking the returned list is of the correct type
@@ -73,6 +75,16 @@ public class RestaurantServiceTest {
 
     @Test
     void getAllSorted() {
+        List<Restaurant> mockRestaurants = Arrays.asList(
+                new Restaurant(1, "name", mockChef, 1, "img", true, 10
+                        , 1.5, 80.3, 3, new Date(), null),
+                new Restaurant(1, "name", mockChef, 1, "img", true, 10
+                        , 1.5, 80.3, 4, new Date(), null),
+                new Restaurant(1, "name", mockChef, 1, "img", true, 10
+                        , 1.5, 80.3, 3, new Date(), null)
+        );
+        Mockito.when(restaurantRepo.findByParams(3, 4, 0, 0, Integer.MAX_VALUE
+                , false, 1)).thenReturn(mockRestaurants.subList(0, 3));
     }
 
     @Test

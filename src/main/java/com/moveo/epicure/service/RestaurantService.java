@@ -65,7 +65,7 @@ public class RestaurantService {
 
         return restaurantRepo.findByParams(minPrice==null?0:minPrice, maxPrice==null?Integer.MAX_VALUE:maxPrice
                         , longitude==null?0:longitude, latitude==null?0:latitude, distance==null?Integer.MAX_VALUE:distance
-                        , open, rating == null ? 1 : rating)
+                        , open==null?false:open, rating == null ? 1 : rating)
                 .stream().sorted(restaurantComparator(newest)).map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
     }
 
