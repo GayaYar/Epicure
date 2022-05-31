@@ -15,7 +15,6 @@ import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
         List<Restaurant> populars;
-        if(amount == null || amount == 3) {
+        if(amount == null || amount == 3 || amount<0) {
             populars = restaurantRepo.findTop3ByOrderByPopularityDesc();
         } else {
             populars = restaurantRepoImpl.findOrderByPopularityLimitedTo(amount);
