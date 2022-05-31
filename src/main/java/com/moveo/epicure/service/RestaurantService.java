@@ -22,14 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class RestaurantService {
-    @Autowired
     private RestaurantRepo restaurantRepo;
-    @Autowired
     private RestaurantRepoImpl restaurantRepoImpl;
-    @Autowired
     private MealRepo mealRepo;
-    @Autowired
-    private ChoiceRepo choiceRepo;
+
+    public RestaurantService(RestaurantRepo restaurantRepo, RestaurantRepoImpl restaurantRepoImpl, MealRepo mealRepo) {
+        this.restaurantRepo = restaurantRepo;
+        this.restaurantRepoImpl = restaurantRepoImpl;
+        this.mealRepo = mealRepo;
+    }
 
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
