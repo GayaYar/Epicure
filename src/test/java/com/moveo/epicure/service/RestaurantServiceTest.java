@@ -13,8 +13,10 @@ import com.moveo.epicure.repo.RestaurantRepoImpl;
 import com.moveo.epicure.util.DtoMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -92,26 +94,52 @@ public class RestaurantServiceTest {
         assertEquals(service.getPopulars(5).get(0).getClass(), RestaurantBriefDTO.class);
     }
 
-    @Test
-    @DisplayName("getAllSorted when the only values are min and max price")
-    void getByMinAndMaxPrice() {
-        Mockito.when(restaurantRepo.findByParams(3, 4, 0, 0, Integer.MAX_VALUE
-                , false, 1)).thenReturn(Arrays.asList(restaurants.get(3), restaurants.get(5)));
-        assertEquals(service.getAllSorted(3,4, null, null, null, null
-                , null, null), Arrays.asList(DtoMapper.restaurantToBriefDto(restaurants.get(3))
-                , DtoMapper.restaurantToBriefDto(restaurants.get(5))));
+    private List<Restaurant> getIndexes(int... indexes) {
+        ArrayList<Restaurant> l = new ArrayList<>(indexes.length);
+        for (int i:indexes
+        ) {
+            l.add(restaurants.get(i));
+        }
+        return l;
+    }
+
+    //sorts by popularity and turns to brief dto
+    private List<RestaurantBriefDTO> mapList(List<Restaurant> l) {
+        return l.stream().sorted(Comparator.comparingInt(Restaurant::getPopularity).reversed())
+                .map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
     }
 
     @Test
-    @DisplayName("getAllSorted when the only values are distance (valid and invalid)")
-    void getByDistance() {
+    void getAllSorted() {
+        //check min and max price
+        List<Restaurant> minMax = getIndexes(3,5);
+        Mockito.when(restaurantRepo.findByParams(3, 4, 0, 0, Integer.MAX_VALUE
+                , false, 1)).thenReturn(minMax);
+        assertEquals(service.getAllSorted(3,4, null, null, null, null
+                , null, null), mapList(minMax));
+
+        //check distance (valid)
+        List<Restaurant> distance = getIndexes(7,8);
         Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 3.5, 6.7, 4
-                , false, 1)).thenReturn(Arrays.asList(restaurants.get(7), restaurants.get(8)));
+                , false, 1)).thenReturn(distance);
         assertEquals(service.getAllSorted(null,null, null, 3.5, 6.7, 4
-                , null, null), Arrays.asList(DtoMapper.restaurantToBriefDto(restaurants.get(7))
-                , DtoMapper.restaurantToBriefDto(restaurants.get(8))));
-        assertThatThrownBy(()->{service.getAllSorted(null,null, null, 3.5, null, 4
-                , null, null);}).isInstanceOf(LocationNotFoundException.class);
+                , null, null), mapList(distance));
+        //check distance (invalid)
+        assertThatThrownBy(()->{service.getAllSorted(null,null, null, 3.5, null
+                , 4, null, null);}).isInstanceOf(LocationNotFoundException.class);
+
+        //check open=true
+        List<Restaurant> open = getIndexes(0, 3, 5, 6, 8);
+        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 0, 0, Integer.MAX_VALUE
+                , true, 1)).thenReturn(open);
+        assertEquals(service.getAllSorted(null,null, null, null, null, null
+                , true, null), mapList(open));
+
+        //check no filters
+        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 0, 0, Integer.MAX_VALUE
+                , false, 1)).thenReturn(restaurants);
+        assertEquals(service.getAllSorted(null, null, null, null, null
+                , null, null, null), mapList(restaurants));
     }
 
     @Test
