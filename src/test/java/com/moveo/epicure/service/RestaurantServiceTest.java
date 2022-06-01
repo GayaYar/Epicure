@@ -1,10 +1,12 @@
 package com.moveo.epicure.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.entity.Chef;
 import com.moveo.epicure.entity.Restaurant;
+import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
@@ -16,8 +18,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -32,13 +32,32 @@ public class RestaurantServiceTest {
     private MealRepo mealRepo;
     private Restaurant mockRestaurant;
     private Chef mockChef;
+    private List<Restaurant> restaurants;
 
     @BeforeAll
     public void setUp() {
         service = new RestaurantService(restaurantRepo, restaurantRepoImpl, mealRepo);
         mockChef = new Chef(2, "yossi", "desc", "img", null, 1, new Date());
-        mockRestaurant = new Restaurant(1, "name", mockChef, 1, "img", true, 10
-                , 1.5, 80.3, 2, new Date(), null);
+        restaurants = new ArrayList<>(8);
+        restaurants.add(new Restaurant(0, "name", mockChef, 1, "img", true, 10
+                , 1.5, 80.3, 2, new Date(), null));
+        restaurants.add(new Restaurant(1, "name", mockChef, 2, "img", false, 3
+                , 1.5, 80.3, 2, new Date(), null));
+        restaurants.add(new Restaurant(2, "name", mockChef, 2, "img", true, 3
+                , 1.5, 80.3, 2, new Date(), null));
+        restaurants.add(new Restaurant(3, "name", mockChef, 2, "img", false, 5
+                , 1.5, 80.3, 4, new Date(), null));
+        restaurants.add(new Restaurant(4, "name", mockChef, 5, "img", false, 3
+                , 1.5, 80.3, 1, new Date(), null));
+        restaurants.add(new Restaurant(5, "name", mockChef, 3, "img", true, 3
+                , 1.5, 80.3, 3, new Date(), null));
+        restaurants.add(new Restaurant(6, "name", mockChef, 4, "img", true, 25
+                , 1.5, 80.3, 1, new Date(), null));
+        restaurants.add(new Restaurant(7, "name", mockChef, 2, "img", false, 3
+                , 20.5, 83.3, 2, new Date(), null));
+        restaurants.add(new Restaurant(8, "name", mockChef, 2, "img", true, 1
+                , 21.5, 83.3, 2, new Date(), null));
+        mockRestaurant = restaurants.get(0);
     }
 
     @Test
@@ -74,17 +93,25 @@ public class RestaurantServiceTest {
     }
 
     @Test
-    void getAllSorted() {
-        List<Restaurant> mockRestaurants = Arrays.asList(
-                new Restaurant(1, "name", mockChef, 1, "img", true, 10
-                        , 1.5, 80.3, 3, new Date(), null),
-                new Restaurant(1, "name", mockChef, 1, "img", true, 10
-                        , 1.5, 80.3, 4, new Date(), null),
-                new Restaurant(1, "name", mockChef, 1, "img", true, 10
-                        , 1.5, 80.3, 3, new Date(), null)
-        );
+    @DisplayName("getAllSorted when the only values are min and max price")
+    void getByMinAndMaxPrice() {
         Mockito.when(restaurantRepo.findByParams(3, 4, 0, 0, Integer.MAX_VALUE
-                , false, 1)).thenReturn(mockRestaurants.subList(0, 3));
+                , false, 1)).thenReturn(Arrays.asList(restaurants.get(3), restaurants.get(5)));
+        assertEquals(service.getAllSorted(3,4, null, null, null, null
+                , null, null), Arrays.asList(DtoMapper.restaurantToBriefDto(restaurants.get(3))
+                , DtoMapper.restaurantToBriefDto(restaurants.get(5))));
+    }
+
+    @Test
+    @DisplayName("getAllSorted when the only values are distance (valid and invalid)")
+    void getByDistance() {
+        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 3.5, 6.7, 4
+                , false, 1)).thenReturn(Arrays.asList(restaurants.get(7), restaurants.get(8)));
+        assertEquals(service.getAllSorted(null,null, null, 3.5, 6.7, 4
+                , null, null), Arrays.asList(DtoMapper.restaurantToBriefDto(restaurants.get(7))
+                , DtoMapper.restaurantToBriefDto(restaurants.get(8))));
+        assertThatThrownBy(()->{service.getAllSorted(null,null, null, 3.5, null, 4
+                , null, null);}).isInstanceOf(LocationNotFoundException.class);
     }
 
     @Test
