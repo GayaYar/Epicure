@@ -6,8 +6,10 @@ import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;
+import com.moveo.epicure.exception.NullException;
 import com.moveo.epicure.repo.ChoiceRepo;
 import com.moveo.epicure.util.DtoMapper;
+import com.moveo.epicure.util.NullUtil;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -85,12 +87,14 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public Optional<RestaurantDTO> findById(Integer id) {
+        NullUtil.validate(id);
         Optional<Restaurant> optionalRest = restaurantRepo.findRestaurantWithMeals(id);
         return optionalRest.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.restaurantToDto(optionalRest.get()));
     }
 
     @Transactional(readOnly = true)
     public Optional<MealDTO> findMeal(Integer id) {
+        NullUtil.validate(id);
         Optional<Meal> optionalMeal = mealRepo.findMealWithChoices(id);
         return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
     }

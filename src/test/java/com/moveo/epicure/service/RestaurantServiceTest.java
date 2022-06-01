@@ -5,8 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.entity.Chef;
+import com.moveo.epicure.entity.Choice;
+import com.moveo.epicure.entity.Meal;
+import com.moveo.epicure.entity.Option;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;
+import com.moveo.epicure.exception.NullException;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
@@ -16,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -144,9 +149,31 @@ public class RestaurantServiceTest {
 
     @Test
     void findById() {
+        //check id is found
+        Mockito.when(restaurantRepo.findRestaurantWithMeals(3)).thenReturn(Optional.of(restaurants.get(3)));
+        assertTrue(service.findById(3).get().equals(DtoMapper.restaurantToDto(restaurants.get(3))));
+
+        //check id is not found
+        Mockito.when(restaurantRepo.findRestaurantWithMeals(-2)).thenReturn(Optional.empty());
+        assertTrue(service.findById(-2).isEmpty());
+
+        //check invalid input
+        assertThatThrownBy(()->{service.findById(null);}).isInstanceOf(NullException.class);
     }
 
     @Test
     void findMeal() {
+        //check invalid input
+        assertThatThrownBy(()->{service.findMeal(null);}).isInstanceOf(NullException.class);
+
+        List<Choice> mealChoices = new ArrayList<>(1);
+        List<Option> option = new ArrayList<>(1);
+        option.add(new Option(1, "avocado"));
+        mealChoices.add(new Choice(2, "choice", 1, 3, option));
+        Meal meal = new Meal(5, "meal", "des", true, true, false, 15.5
+                , "img", "food", mealChoices);
+        //check valid
+        Mockito.when(mealRepo.findMealWithChoices(5)).thenReturn(Optional.of(meal));
+        assertEquals(service.findMeal(5).get(), DtoMapper.mealToDto(meal));
     }
 }
