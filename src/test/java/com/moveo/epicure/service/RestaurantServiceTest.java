@@ -49,7 +49,6 @@ public class RestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("getPopulrars call find top 3 and returns list of RestaurantBriefDto")
     void getPopularsCallsFindTop3() {
         Mockito.when(restaurantRepo.findTop3ByOrderByPopularityDesc()).thenReturn(getRestaurantIndexes(6,9,8));
         assertEquals(service.getPopulars(3), getBriefIndexes(6,9,8));
@@ -58,7 +57,6 @@ public class RestaurantServiceTest {
     }
 
     @Test
-    @DisplayName("getPopulrars call find top limit and returns list of RestaurantBriefDto")
     void getPopularsCallsFindTopLimit() {
         Mockito.when(restaurantRepoImpl.findOrderByPopularityLimitedTo(5)).thenReturn(getRestaurantIndexes(6,9,8,7,0));
         assertEquals(service.getPopulars(5), getBriefIndexes(6,9,8,7,0));
