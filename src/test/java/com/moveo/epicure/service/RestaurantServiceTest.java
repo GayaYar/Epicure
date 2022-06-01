@@ -11,6 +11,7 @@ import com.moveo.epicure.entity.Option;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.exception.NullException;
+import com.moveo.epicure.mock.MockRestaurant;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
@@ -37,69 +38,33 @@ public class RestaurantServiceTest {
     private RestaurantRepoImpl restaurantRepoImpl;
     @Mock
     private MealRepo mealRepo;
-    private Restaurant mockRestaurant;
-    private Chef mockChef;
     private List<Restaurant> restaurants;
+    private List<RestaurantBriefDTO> briefDTOS;
 
     @BeforeAll
     public void setUp() {
         service = new RestaurantService(restaurantRepo, restaurantRepoImpl, mealRepo);
-        mockChef = new Chef(2, "yossi", "desc", "img", null, 1, new Date());
-        restaurants = new ArrayList<>(8);
-        restaurants.add(new Restaurant(0, "name", mockChef, 1, "img", true, 10
-                , 1.5, 80.3, 2, new Date(), null));
-        restaurants.add(new Restaurant(1, "name", mockChef, 2, "img", false, 3
-                , 1.5, 80.3, 2, new Date(), null));
-        restaurants.add(new Restaurant(2, "name", mockChef, 2, "img", true, 3
-                , 1.5, 80.3, 2, new Date(), null));
-        restaurants.add(new Restaurant(3, "name", mockChef, 2, "img", false, 5
-                , 1.5, 80.3, 4, new Date(), null));
-        restaurants.add(new Restaurant(4, "name", mockChef, 5, "img", false, 3
-                , 1.5, 80.3, 1, new Date(), null));
-        restaurants.add(new Restaurant(5, "name", mockChef, 3, "img", true, 3
-                , 1.5, 80.3, 3, new Date(), null));
-        restaurants.add(new Restaurant(6, "name", mockChef, 4, "img", true, 25
-                , 1.5, 80.3, 1, new Date(), null));
-        restaurants.add(new Restaurant(7, "name", mockChef, 2, "img", false, 3
-                , 20.5, 83.3, 2, new Date(), null));
-        restaurants.add(new Restaurant(8, "name", mockChef, 2, "img", true, 1
-                , 21.5, 83.3, 2, new Date(), null));
-        mockRestaurant = restaurants.get(0);
+        restaurants = MockRestaurant.all();
+        briefDTOS = MockRestaurant.allBrief();
     }
 
     @Test
     @DisplayName("getPopulrars call find top 3 and returns list of RestaurantBriefDto")
     void getPopularsCallsFindTop3() {
-        Mockito.when(restaurantRepo.findTop3ByOrderByPopularityDesc()).thenReturn(Arrays.asList(mockRestaurant
-                , mockRestaurant, mockRestaurant));
-        //checking returned list size is 3
-        assertTrue(service.getPopulars(null).size() == 3);
-        //checking the repository is being called
-        Mockito.verify(restaurantRepo, Mockito.times(1)).findTop3ByOrderByPopularityDesc();
-        //checking returned list size is 3
-        assertTrue(service.getPopulars(3).size() == 3);
-        //checking the repository is being called
-        Mockito.verify(restaurantRepo, Mockito.times(1)).findTop3ByOrderByPopularityDesc();
-        //checking the returned list is of the correct type
-        assertEquals(service.getPopulars(null).get(0).getClass(), RestaurantBriefDTO.class);
-        //checking the returned list is of the correct type
-        assertEquals(service.getPopulars(3).get(0).getClass(), RestaurantBriefDTO.class);
+        Mockito.when(restaurantRepo.findTop3ByOrderByPopularityDesc()).thenReturn(getRestaurantIndexes(6,9,8));
+        assertEquals(service.getPopulars(3), getBriefIndexes(6,9,8));
+        assertEquals(service.getPopulars(null), getBriefIndexes(6,9,8));
+        assertEquals(service.getPopulars(-2), getBriefIndexes(6,9,8));
     }
 
     @Test
     @DisplayName("getPopulrars call find top limit and returns list of RestaurantBriefDto")
     void getPopularsCallsFindTopLimit() {
-        Mockito.when(restaurantRepoImpl.findOrderByPopularityLimitedTo(5)).thenReturn(Arrays.asList(mockRestaurant
-                , mockRestaurant, mockRestaurant, mockRestaurant, mockRestaurant));
-        //checking returned list size is 5
-        assertTrue(service.getPopulars(5).size() == 5);
-        //checking the repository is being called
-        Mockito.verify(restaurantRepoImpl, Mockito.times(1)).findOrderByPopularityLimitedTo(5);
-        //checking the returned list is of the correct type
-        assertEquals(service.getPopulars(5).get(0).getClass(), RestaurantBriefDTO.class);
+        Mockito.when(restaurantRepoImpl.findOrderByPopularityLimitedTo(5)).thenReturn(getRestaurantIndexes(6,9,8,7,0));
+        assertEquals(service.getPopulars(5), getBriefIndexes(6,9,8,7,0));
     }
 
-    private List<Restaurant> getIndexes(int... indexes) {
+    private List<Restaurant> getRestaurantIndexes(int... indexes) {
         ArrayList<Restaurant> l = new ArrayList<>(indexes.length);
         for (int i:indexes
         ) {
@@ -108,72 +73,77 @@ public class RestaurantServiceTest {
         return l;
     }
 
-    //sorts by popularity and turns to brief dto
-    private List<RestaurantBriefDTO> mapList(List<Restaurant> l) {
-        return l.stream().sorted(Comparator.comparingInt(Restaurant::getPopularity).reversed())
-                .map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
+    private List<RestaurantBriefDTO> getBriefIndexes(int... indexes) {
+        List<RestaurantBriefDTO> chosen = new ArrayList<>(indexes.length);
+        for (int i: indexes) {
+            chosen.add(briefDTOS.get(i));
+        }
+        return chosen;
     }
 
     @Test
-    void getAllSorted() {
-        //check min and max price
-        List<Restaurant> minMax = getIndexes(3,5);
+    void getAllSortedPrice() {
         Mockito.when(restaurantRepo.findByParams(3, 4, 0, 0, Integer.MAX_VALUE
-                , false, 1)).thenReturn(minMax);
+                , false, 1)).thenReturn(getRestaurantIndexes(3,5));
         assertEquals(service.getAllSorted(3,4, null, null, null, null
-                , null, null), mapList(minMax));
+                , null, null), getBriefIndexes(3,5));
+    }
 
-        //check distance (valid)
-        List<Restaurant> distance = getIndexes(7,8);
-        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 3.5, 6.7, 4
-                , false, 1)).thenReturn(distance);
-        assertEquals(service.getAllSorted(null,null, null, 3.5, 6.7, 4
-                , null, null), mapList(distance));
-        //check distance (invalid)
+    @Test
+    void getAllSortedDistanceValid() {
+        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 15.0, 15.0, 4
+                , false, 1)).thenReturn(getRestaurantIndexes(7,8,9));
+
+        assertEquals(service.getAllSorted(null, null, null, 15.0, 15.0
+                , 4, null, null), getBriefIndexes(9,8,7));
+    }
+
+    @Test
+    void getAllSortedDistanceInvalid() {
         assertThatThrownBy(()->{service.getAllSorted(null,null, null, 3.5, null
                 , 4, null, null);}).isInstanceOf(LocationNotFoundException.class);
-
-        //check open=true
-        List<Restaurant> open = getIndexes(0, 3, 5, 6, 8);
-        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 0, 0, Integer.MAX_VALUE
-                , true, 1)).thenReturn(open);
-        assertEquals(service.getAllSorted(null,null, null, null, null, null
-                , true, null), mapList(open));
-
-        //check no filters
-        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 0, 0, Integer.MAX_VALUE
-                , false, 1)).thenReturn(restaurants);
-        assertEquals(service.getAllSorted(null, null, null, null, null
-                , null, null, null), mapList(restaurants));
     }
 
     @Test
-    void findById() {
-        //check id is found
-        Mockito.when(restaurantRepo.findRestaurantWithMeals(3)).thenReturn(Optional.of(restaurants.get(3)));
-        assertTrue(service.findById(3).get().equals(DtoMapper.restaurantToDto(restaurants.get(3))));
+    void getAllSortedOpen() {
+        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 0, 0, Integer.MAX_VALUE
+                , true, 1)).thenReturn(getRestaurantIndexes(0,2,5,6,8,9));
 
-        //check id is not found
+        assertEquals(service.getAllSorted(null, null, null, null, null
+                , null, true, null), getBriefIndexes(6,9,8,0,2,5));
+    }
+
+    @Test
+    @DisplayName("getAllSorted receiving null as parameters")
+    void getAllSortedAll() {
+        Mockito.when(restaurantRepo.findByParams(0, Integer.MAX_VALUE, 0, 0, Integer.MAX_VALUE
+                , false, 1)).thenReturn(restaurants);
+
+        assertEquals(service.getAllSorted(null, null, null, null, null
+                , null, null, null), getBriefIndexes(6,9,8,7,0,4,3,2,1,5));
+    }
+
+    @Test
+    void findByIdIsFoundWithoutMeals() {
+        Mockito.when(restaurantRepo.findRestaurantWithMeals(5)).thenReturn(Optional.of(restaurants.get(5)));
+        assertTrue(service.findById(5).get().equals(MockRestaurant.id5AsDto()));
+    }
+
+    @Test
+    void findByIdIsFoundWithMeals() {
+        Mockito.when(restaurantRepo.findRestaurantWithMeals(9)).thenReturn(Optional.of(restaurants.get(9)));
+        assertTrue(service.findById(9).get().equals(MockRestaurant.id9asDtoWithMeals()));
+    }
+
+    @Test
+    void findByIdNotFound() {
         Mockito.when(restaurantRepo.findRestaurantWithMeals(-2)).thenReturn(Optional.empty());
         assertTrue(service.findById(-2).isEmpty());
-
-        //check invalid input
-        assertThatThrownBy(()->{service.findById(null);}).isInstanceOf(NullException.class);
     }
 
     @Test
     void findMeal() {
-        //check invalid input
-        assertThatThrownBy(()->{service.findMeal(null);}).isInstanceOf(NullException.class);
-
-        List<Choice> mealChoices = new ArrayList<>(1);
-        List<Option> option = new ArrayList<>(1);
-        option.add(new Option(1, "avocado"));
-        mealChoices.add(new Choice(2, "choice", 1, 3, option));
-        Meal meal = new Meal(5, "meal", "des", true, true, false, 15.5
-                , "img", "food", mealChoices);
-        //check valid
-        Mockito.when(mealRepo.findMealWithChoices(5)).thenReturn(Optional.of(meal));
-        assertEquals(service.findMeal(5).get(), DtoMapper.mealToDto(meal));
+        Mockito.when(mealRepo.findMealWithChoices(1)).thenReturn(Optional.of(restaurants.get(9).getMeals().get(0)));
+        assertEquals(service.findMeal(1).get(), MockRestaurant.meal1Dto());
     }
 }
