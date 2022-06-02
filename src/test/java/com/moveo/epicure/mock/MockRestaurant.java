@@ -1,12 +1,12 @@
 package com.moveo.epicure.mock;
 
-import com.moveo.epicure.dto.ChoiceDTO;
-import com.moveo.epicure.dto.MealBriefDTO;
-import com.moveo.epicure.dto.MealDTO;
-import com.moveo.epicure.dto.OptionDTO;
-import com.moveo.epicure.dto.RestaurantBriefDTO;
-import com.moveo.epicure.dto.RestaurantDTO;
-import com.moveo.epicure.dto.RestaurantMeals;
+import com.moveo.epicure.swagger.dto.ChoiceDTO;
+import com.moveo.epicure.swagger.dto.MealBriefDTO;
+import com.moveo.epicure.swagger.dto.MealDTO;
+import com.moveo.epicure.swagger.dto.OptionDTO;
+import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
+import com.moveo.epicure.swagger.dto.RestaurantDTO;
+import com.moveo.epicure.swagger.dto.RestaurantMeals;
 import com.moveo.epicure.entity.Chef;
 import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.Label;
@@ -18,8 +18,15 @@ import java.util.Date;
 import java.util.List;
 
 public class MockRestaurant {
+    private List<Restaurant> allRestaurants;
+    private List<RestaurantBriefDTO> allBriefs;
 
-    public static List<Restaurant> all() {
+    public MockRestaurant() {
+        allRestaurants = allRestaurantsInitialise();
+        allBriefs = allBriefInitialise();
+    }
+
+    private List<Restaurant> allRestaurantsInitialise() {
         Chef mockChef = new Chef(2, "yossi", "desc", "img", new ArrayList<>(), 1
                 , new Date());
         List<Choice> mealChoices = new ArrayList<>(1);
@@ -56,7 +63,7 @@ public class MockRestaurant {
         return restaurants;
     }
 
-    public static List<RestaurantBriefDTO> allBrief() {
+    private List<RestaurantBriefDTO> allBriefInitialise() {
         List<RestaurantBriefDTO> briefs = new ArrayList<>(10);
         briefs.add(new RestaurantBriefDTO(0, "name", "yossi", 1, "img"));
         briefs.add(new RestaurantBriefDTO(1, "name", "yossi", 2, "img"));
@@ -71,11 +78,11 @@ public class MockRestaurant {
         return briefs;
     }
 
-    public static RestaurantDTO id5AsDto() {
+    public RestaurantDTO restaurant5AsDto() {
         return new RestaurantDTO(5, "name", "yossi", 3, "img", true, new ArrayList<>());
     }
 
-    public static RestaurantDTO id9asDtoWithMeals() {
+    public RestaurantDTO restaurant9asDtoWithMeals() {
         List<RestaurantMeals> restaurantMeals = new ArrayList<>(1);
         List<MealBriefDTO> briefMeals = new ArrayList<>(2);
         briefMeals.add(new MealBriefDTO(1, "meal1", "des", 15.5, "img"));
@@ -84,7 +91,7 @@ public class MockRestaurant {
         return new RestaurantDTO(9, "name", "yossi", 2, "img", true, restaurantMeals);
     }
 
-    public static MealDTO meal1Dto() {
+    public MealDTO meal1asDto() {
         List<ChoiceDTO> choiceDTOS = new ArrayList<>(1);
         List<OptionDTO> optionDTOS = new ArrayList<>(1);
         optionDTOS.add(new OptionDTO(1, "avocado"));
@@ -96,4 +103,32 @@ public class MockRestaurant {
         return new MealDTO(1, "meal1", "des", labels, 15.5, choiceDTOS, "img", 1);
     }
 
+    public List<Restaurant> getAllRestaurants() {
+        return allRestaurants;
+    }
+
+    public List<RestaurantBriefDTO> getAllBriefs() {
+        return allBriefs;
+    }
+
+    public List<Restaurant> getRestaurantIndexes(int... indexes) {
+        ArrayList<Restaurant> l = new ArrayList<>(indexes.length);
+        for (int i:indexes
+        ) {
+            l.add(allRestaurants.get(i));
+        }
+        return l;
+    }
+
+    public List<RestaurantBriefDTO> getBriefIndexes(int... indexes) {
+        List<RestaurantBriefDTO> chosen = new ArrayList<>(indexes.length);
+        for (int i: indexes) {
+            chosen.add(allBriefs.get(i));
+        }
+        return chosen;
+    }
+
+    public Restaurant getRestaurant(int index) {
+        return allRestaurants.get(index);
+    }
 }

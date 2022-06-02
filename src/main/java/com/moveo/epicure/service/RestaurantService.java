@@ -1,13 +1,11 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.dto.MealDTO;
-import com.moveo.epicure.dto.RestaurantDTO;
-import com.moveo.epicure.dto.RestaurantBriefDTO;
+import com.moveo.epicure.swagger.dto.MealDTO;
+import com.moveo.epicure.swagger.dto.RestaurantDTO;
+import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;
-import com.moveo.epicure.exception.NullException;
-import com.moveo.epicure.repo.ChoiceRepo;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.NullUtil;
 import java.util.Comparator;
@@ -36,7 +34,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
         List<Restaurant> populars;
-        if(amount == null || amount == 3 || amount<0) {
+        if(amount == null) {
             populars = restaurantRepo.findTop3ByOrderByPopularityDesc();
         } else {
             populars = restaurantRepoImpl.findOrderByPopularityLimitedTo(amount);

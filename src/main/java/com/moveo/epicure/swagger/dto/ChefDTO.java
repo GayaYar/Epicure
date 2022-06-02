@@ -1,4 +1,4 @@
-package com.moveo.epicure.dto;
+package com.moveo.epicure.swagger.dto;
 
 import java.util.List;
 import javax.validation.constraints.NotNull;
