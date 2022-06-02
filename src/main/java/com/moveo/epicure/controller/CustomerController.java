@@ -8,6 +8,7 @@ import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.service.CustomerService;
+import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,11 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<LoginResponse> signup(@Valid @RequestBody RegisterInfo info) {
         return ResponseEntity.ok(service.signup(info));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<CartDTO>> getHistory() {
+        return ResponseEntity.ok(service.getHistory());
     }
 
 }
