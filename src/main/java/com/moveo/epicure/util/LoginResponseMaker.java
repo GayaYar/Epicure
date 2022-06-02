@@ -1,6 +1,6 @@
 package com.moveo.epicure.util;
 
-import com.moveo.epicure.swagger.dto.LoginResponse;
+import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.entity.Customer;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

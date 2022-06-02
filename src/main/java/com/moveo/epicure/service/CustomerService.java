@@ -1,12 +1,12 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.swagger.dto.CartDTO;
-import com.moveo.epicure.swagger.dto.CartMealDTO;
-import com.moveo.epicure.swagger.dto.CustomerDetail;
-import com.moveo.epicure.swagger.dto.LoginInfo;
-import com.moveo.epicure.swagger.dto.LoginResponse;
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.RegisterInfo;
+import com.moveo.epicure.dto.CartDTO;
+import com.moveo.epicure.dto.CartMealDTO;
+import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.LoginInfo;
+import com.moveo.epicure.dto.LoginResponse;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
@@ -18,6 +18,7 @@ import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.LoginResponseMaker;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,8 +48,8 @@ public class CustomerService {
      */
     private Cart getCurrentCart(boolean withMeals) {
         Integer customerId = detail.getId();
-        Optional<Cart> optionalCart = withMeals ? cartRepo.findByCustomerIdAndCurrentTrue(customerId) :
-                cartRepo.findCurrentWithMeals(customerId);
+        Optional<Cart> optionalCart = withMeals ? cartRepo.findCurrentWithMeals(customerId) :
+                cartRepo.findByCustomerIdAndCurrentTrue(customerId);
         if(optionalCart.isPresent()) {
             return optionalCart.get();
         }

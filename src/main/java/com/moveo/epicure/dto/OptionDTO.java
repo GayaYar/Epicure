@@ -1,4 +1,4 @@
-package com.moveo.epicure.swagger.dto;
+package com.moveo.epicure.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
