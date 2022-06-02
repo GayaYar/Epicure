@@ -68,7 +68,7 @@ public class CustomerService {
     public void updateCartComment(String comment) {
         Cart currentCart = getCurrentCart(false);
         currentCart.setComment(comment);
-        DtoMapper.cartToDto(cartRepo.save(currentCart));
+        cartRepo.save(currentCart);
     }
 
     public void buyCart() {

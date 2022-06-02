@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.CustomerDetail;
 import com.moveo.epicure.entity.Cart;
+import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.mock.MockCustomer;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
@@ -64,10 +65,28 @@ class CustomerServiceTest {
 
     @Test
     void updateCartComment() {
+        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
+                , null);
+        Cart difCart = new Cart(5, true, "different", 58.9, new Customer(3, "cusName")
+                , null);
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(cart));
+        Mockito.when(detail.getId()).thenReturn(3);
+        service.updateCartComment("different");
+        Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
+        assertEquals(cartArgumentCaptor.getValue(), difCart);
     }
 
     @Test
     void buyCart() {
+        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
+                , null);
+        Cart notCurrentCart = new Cart(5, false, "yes", 58.9, new Customer(3, "cusName")
+                , null);
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(cart));
+        Mockito.when(detail.getId()).thenReturn(3);
+        service.buyCart();
+        Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
+        assertEquals(cartArgumentCaptor.getValue(), notCurrentCart);
     }
 
     @Test

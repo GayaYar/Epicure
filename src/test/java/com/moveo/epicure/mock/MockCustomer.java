@@ -58,7 +58,7 @@ public class MockCustomer {
 
     public Cart differentCommentCart() {
         return new Cart(currentCart.getId(), currentCart.isCurrent(), "different", currentCart.getOverallPrice()
-                , currentCart.getCustomer(), currentCart.getChosenMeals());
+                , currentCart.getCustomer(), null);
     }
 
     public CartDTO emptyCartDto() {
