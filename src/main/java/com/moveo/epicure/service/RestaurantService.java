@@ -1,13 +1,13 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.dto.MealDTO;
-import com.moveo.epicure.dto.RestaurantDTO;
-import com.moveo.epicure.dto.RestaurantBriefDTO;
+import com.moveo.epicure.swagger.dto.MealDTO;
+import com.moveo.epicure.swagger.dto.RestaurantDTO;
+import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;
-import com.moveo.epicure.repo.ChoiceRepo;
 import com.moveo.epicure.util.DtoMapper;
+import com.moveo.epicure.util.NullUtil;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -15,26 +15,26 @@ import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class RestaurantService {
-    @Autowired
     private RestaurantRepo restaurantRepo;
-    @Autowired
     private RestaurantRepoImpl restaurantRepoImpl;
-    @Autowired
     private MealRepo mealRepo;
-    @Autowired
-    private ChoiceRepo choiceRepo;
+
+    public RestaurantService(RestaurantRepo restaurantRepo, RestaurantRepoImpl restaurantRepoImpl, MealRepo mealRepo) {
+        this.restaurantRepo = restaurantRepo;
+        this.restaurantRepoImpl = restaurantRepoImpl;
+        this.mealRepo = mealRepo;
+    }
 
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
         List<Restaurant> populars;
-        if(amount == null || amount == 3) {
+        if(amount == null) {
             populars = restaurantRepo.findTop3ByOrderByPopularityDesc();
         } else {
             populars = restaurantRepoImpl.findOrderByPopularityLimitedTo(amount);
@@ -65,7 +65,7 @@ public class RestaurantService {
 
         return restaurantRepo.findByParams(minPrice==null?0:minPrice, maxPrice==null?Integer.MAX_VALUE:maxPrice
                         , longitude==null?0:longitude, latitude==null?0:latitude, distance==null?Integer.MAX_VALUE:distance
-                        , open, rating == null ? 1 : rating)
+                        , open==null?false:open, rating == null ? 1 : rating)
                 .stream().sorted(restaurantComparator(newest)).map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
     }
 
@@ -85,12 +85,14 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public Optional<RestaurantDTO> findById(Integer id) {
+        NullUtil.validate(id);
         Optional<Restaurant> optionalRest = restaurantRepo.findRestaurantWithMeals(id);
         return optionalRest.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.restaurantToDto(optionalRest.get()));
     }
 
     @Transactional(readOnly = true)
     public Optional<MealDTO> findMeal(Integer id) {
+        NullUtil.validate(id);
         Optional<Meal> optionalMeal = mealRepo.findMealWithChoices(id);
         return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
     }

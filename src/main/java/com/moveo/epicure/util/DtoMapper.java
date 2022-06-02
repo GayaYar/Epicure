@@ -2,17 +2,17 @@ package com.moveo.epicure.util;
 
 import static java.util.stream.Collectors.groupingBy;
 
-import com.moveo.epicure.dto.CartDTO;
-import com.moveo.epicure.dto.CartMealDTO;
-import com.moveo.epicure.dto.ChefBriefDTO;
-import com.moveo.epicure.dto.ChefDTO;
-import com.moveo.epicure.dto.ChoiceDTO;
-import com.moveo.epicure.dto.MealBriefDTO;
-import com.moveo.epicure.dto.MealDTO;
-import com.moveo.epicure.dto.OptionDTO;
-import com.moveo.epicure.dto.RestaurantBriefDTO;
-import com.moveo.epicure.dto.RestaurantDTO;
-import com.moveo.epicure.dto.RestaurantMeals;
+import com.moveo.epicure.swagger.dto.CartDTO;
+import com.moveo.epicure.swagger.dto.CartMealDTO;
+import com.moveo.epicure.swagger.dto.ChefBriefDTO;
+import com.moveo.epicure.swagger.dto.ChefDTO;
+import com.moveo.epicure.swagger.dto.ChoiceDTO;
+import com.moveo.epicure.swagger.dto.MealBriefDTO;
+import com.moveo.epicure.swagger.dto.MealDTO;
+import com.moveo.epicure.swagger.dto.OptionDTO;
+import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
+import com.moveo.epicure.swagger.dto.RestaurantDTO;
+import com.moveo.epicure.swagger.dto.RestaurantMeals;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.Chef;
 import com.moveo.epicure.entity.Choice;
