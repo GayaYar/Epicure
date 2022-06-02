@@ -29,8 +29,7 @@ public class Restaurant {
     @NotNull
     @Column(unique = true)
     private String name;
-    @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Chef chef;
     @NotNull
     @Min(0) @Max(5)

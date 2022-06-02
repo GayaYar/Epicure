@@ -8,4 +8,9 @@ public class QueryUtil {
                     + "<=:distance and (r.open = true or r.open = :open) and r.rating = :rating";
   
     public static final String getChefWithRestaurants = "SELECT c FROM Chef c JOIN FETCH c.restaurants WHERE c.id=:id";
+
+    public static final String restaurantByIdWithMeals = "SELECT r FROM Restaurant r JOIN FETCH r.meals WHERE r.id=:id";
+
+    public static final String searchByName =
+            "SELECT r FROM Restaurant r JOIN r.chef c JOIN r.meals m WHERE r.name=:name or c.name=:name or m.name=:name";
 }
