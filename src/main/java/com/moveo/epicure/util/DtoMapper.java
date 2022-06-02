@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class DtoMapper {
     public static CartDTO cartToDto(Cart cart) {
-        return new CartDTO(mapListIfExists(cart.getChosenMeals()), cart.getComment(), cart.getOverallPrice());
+        return new CartDTO(cart.getCustomer().getName(), mapListIfExists(cart.getChosenMeals()), cart.getComment(), cart.getOverallPrice());
     }
 
     private static List<CartMealDTO> mapListIfExists(List<ChosenMeal> chosenMeals) {

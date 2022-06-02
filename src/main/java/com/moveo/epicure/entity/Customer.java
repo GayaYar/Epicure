@@ -29,13 +29,14 @@ public class Customer {
     @Size(min = 4)
     private String password;
 
-    public Customer(Integer id) {
-        this.id = id;
-    }
-
     public Customer(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public Customer(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }

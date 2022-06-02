@@ -14,6 +14,7 @@ public class LoginResponseMaker {
         String jwts = Jwts.builder()
                 .setIssuer("epicure")
                 .setSubject("" + id)
+                .claim("customerName", name)
                 .setIssuedAt(new Date())
                 .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg ".getBytes()))
                 .compact();

@@ -29,18 +29,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class CustomerService {
-    @Autowired
     private CustomerDetail detail;
-    @Autowired
     private CustomerRepo customerRepo;
-    @Autowired
     private CartRepo cartRepo;
-    @Autowired
     private MealRepo mealRepo;
-    @Autowired
     private ChosenMealRepo chosenMealRepo;
-    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
+            ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder) {
+        this.detail = detail;
+        this.customerRepo = customerRepo;
+        this.cartRepo = cartRepo;
+        this.mealRepo = mealRepo;
+        this.chosenMealRepo = chosenMealRepo;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Gets the customer's current cart.
@@ -54,7 +58,7 @@ public class CustomerService {
         if(optionalCart.isPresent()) {
             return optionalCart.get();
         }
-        return cartRepo.save(new Cart(true, new Customer(customerId)));
+        return cartRepo.save(new Cart(true, new Customer(customerId, detail.getName())));
     }
 
     public CartDTO getCart() {
