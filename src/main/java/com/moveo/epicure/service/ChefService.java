@@ -1,7 +1,7 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.swagger.dto.ChefBriefDTO;
-import com.moveo.epicure.swagger.dto.ChefDTO;
+import com.moveo.epicure.dto.ChefBriefDTO;
+import com.moveo.epicure.dto.ChefDTO;
 import com.moveo.epicure.entity.Chef;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.ChefRepo;

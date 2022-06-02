@@ -17,7 +17,7 @@ public class SearchService {
 
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> searchFoRestaurants(String input) {
-        return restaurantRepo.searchRestaurnts(input).stream().map(DtoMapper::restaurantToBriefDto)
+        return restaurantRepo.searchRestaurants(input).stream().map(DtoMapper::restaurantToBriefDto)
                 .collect(Collectors.toList());
     }
 }

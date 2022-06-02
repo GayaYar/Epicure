@@ -1,12 +1,12 @@
 package com.moveo.epicure.mock;
 
-import com.moveo.epicure.swagger.dto.ChoiceDTO;
-import com.moveo.epicure.swagger.dto.MealBriefDTO;
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.OptionDTO;
-import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
-import com.moveo.epicure.swagger.dto.RestaurantDTO;
-import com.moveo.epicure.swagger.dto.RestaurantMeals;
+import com.moveo.epicure.dto.ChoiceDTO;
+import com.moveo.epicure.dto.MealBriefDTO;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.OptionDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
+import com.moveo.epicure.dto.RestaurantDTO;
+import com.moveo.epicure.dto.RestaurantMeals;
 import com.moveo.epicure.entity.Chef;
 import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.Label;

@@ -1,12 +1,12 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.swagger.dto.CartDTO;
-import com.moveo.epicure.swagger.dto.CartMealDTO;
-import com.moveo.epicure.swagger.dto.CustomerDetail;
-import com.moveo.epicure.swagger.dto.LoginInfo;
-import com.moveo.epicure.swagger.dto.LoginResponse;
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.RegisterInfo;
+import com.moveo.epicure.dto.CartDTO;
+import com.moveo.epicure.dto.CartMealDTO;
+import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.LoginInfo;
+import com.moveo.epicure.dto.LoginResponse;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;

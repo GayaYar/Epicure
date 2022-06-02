@@ -1,8 +1,8 @@
 package com.moveo.epicure.controller;
 
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.RestaurantDTO;
-import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RestaurantDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
 import java.util.List;
