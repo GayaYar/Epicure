@@ -1,15 +1,20 @@
 package com.moveo.epicure.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.entity.Cart;
+import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
+import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockCustomer;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -90,7 +95,19 @@ class CustomerServiceTest {
     }
 
     @Test
+    void addToCartMealNotFound() {
+        Mockito.when(mealRepo.findById(12)).thenReturn(Optional.empty());
+        assertThatThrownBy(()->{service.addToCart(mockCustomer.mealDto());}).isInstanceOf(NotFoundException.class)
+                .hasMessage("Could not find the meal you were looking for.");
+    }
+
+    @Test
     void addToCart() {
+        Mockito.when(mealRepo.findById(1)).thenReturn(Optional.of(mockCustomer.mockMeal()));
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(mockCustomer.noMealsCart()));
+        Mockito.when(detail.getId()).thenReturn(3);
+        //add verify turned to chosen meal and save
+        //add verify turned to cart meal dto and returned (assert equals)
     }
 
     @Test
