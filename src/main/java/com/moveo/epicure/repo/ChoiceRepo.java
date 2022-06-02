@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChoiceRepo extends JpaRepository<Choice, Integer> {
-    List<Choice> findByMeal(Meal meal);
 }
