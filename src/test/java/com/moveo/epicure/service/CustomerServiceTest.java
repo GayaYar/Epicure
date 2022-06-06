@@ -4,17 +4,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.CustomerDetail;
-import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
+import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockCustomer;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
-import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -42,13 +41,21 @@ class CustomerServiceTest {
     private MockCustomer mockCustomer;
     @Captor
     private ArgumentCaptor<Cart> cartArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<ChosenMeal> chosenMealArgumentCaptor;
 
+    /**
+     * instantiates the necessary fields for the tests
+     */
     @BeforeAll
     void initialiseTest() {
         service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder);
         mockCustomer = new MockCustomer();
     }
 
+    /**
+     * assures the method returns the correct cart
+     */
     @Test
     void getCartFound() {
         Mockito.when(detail.getId()).thenReturn(3);
@@ -56,8 +63,10 @@ class CustomerServiceTest {
         assertEquals(service.getCart(), mockCustomer.getCartDTO());
     }
 
+    /**
+     * assuring that if the customer doesn't have a current cart, a new empty cart will be saved for him
+     */
     @Test
-    @DisplayName("assuring that if the customer doesn't have a current cart, a new empty cart will be saved for him")
     void getCartNotFound() {
         Mockito.when(detail.getId()).thenReturn(5);
         Mockito.when(detail.getName()).thenReturn("cusName");
@@ -68,6 +77,9 @@ class CustomerServiceTest {
         assertEquals(service.getCart(), mockCustomer.emptyCartDto());
     }
 
+    /**
+     * makes sure that the method changes the "comment" field appropriately and saves the cart
+     */
     @Test
     void updateCartComment() {
         Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
@@ -81,6 +93,9 @@ class CustomerServiceTest {
         assertEquals(cartArgumentCaptor.getValue(), difCart);
     }
 
+    /**
+     * makes sure that the method converts the cart's "current" field to false and saves it
+     */
     @Test
     void buyCart() {
         Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
@@ -94,20 +109,46 @@ class CustomerServiceTest {
         assertEquals(cartArgumentCaptor.getValue(), notCurrentCart);
     }
 
+    /**
+     * checks that in an event where no such meal exists, a "NotFoundException" with a proper message is thrown
+     */
     @Test
     void addToCartMealNotFound() {
-        Mockito.when(mealRepo.findById(12)).thenReturn(Optional.empty());
-        assertThatThrownBy(()->{service.addToCart(mockCustomer.mealDto());}).isInstanceOf(NotFoundException.class)
+        Mockito.when(mealRepo.findById(1)).thenReturn(Optional.empty());
+        assertThatThrownBy(()->{service.addToCart(mockCustomer.mockMealDto());}).isInstanceOf(NotFoundException.class)
                 .hasMessage("Could not find the meal you were looking for.");
     }
 
+    /**
+     * checks that the method saves a converted meal (from mealDto to chosenMeal)
+     */
     @Test
-    void addToCart() {
-        Mockito.when(mealRepo.findById(1)).thenReturn(Optional.of(mockCustomer.mockMeal()));
-        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(mockCustomer.noMealsCart()));
+    void addToCartVerifySave() {
+        Meal mockMeal = mockCustomer.mockMeal();
+        Cart noMealsCart = mockCustomer.noMealsCart();
+        Mockito.when(mealRepo.findById(1)).thenReturn(Optional.of(mockMeal));
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(noMealsCart));
         Mockito.when(detail.getId()).thenReturn(3);
-        //add verify turned to chosen meal and save
-        //add verify turned to cart meal dto and returned (assert equals)
+        Mockito.when(chosenMealRepo.save(mockCustomer.convertedChosenMeal(mockMeal, noMealsCart)))
+                .thenReturn(mockCustomer.mockChosenMeal(mockMeal, noMealsCart));
+        service.addToCart(mockCustomer.mockMealDto());
+        Mockito.verify(chosenMealRepo, Mockito.times(1)).save(chosenMealArgumentCaptor.capture());
+        assertEquals(chosenMealArgumentCaptor.getValue(), mockCustomer.convertedChosenMeal(mockMeal, noMealsCart));
+    }
+
+    /**
+     * checks that the returned value is converted (from mealDto to chosenMeal to cartMeal)
+     */
+    @Test
+    void addToCartAssertReturnedType() {
+        Meal mockMeal = mockCustomer.mockMeal();
+        Cart noMealsCart = mockCustomer.noMealsCart();
+        Mockito.when(mealRepo.findById(1)).thenReturn(Optional.of(mockMeal));
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(noMealsCart));
+        Mockito.when(detail.getId()).thenReturn(3);
+        Mockito.when(chosenMealRepo.save(mockCustomer.convertedChosenMeal(mockMeal, noMealsCart)))
+                .thenReturn(mockCustomer.mockChosenMeal(mockMeal, noMealsCart));
+        assertEquals(service.addToCart(mockCustomer.mockMealDto()), mockCustomer.mockCartMeal());
     }
 
     @Test

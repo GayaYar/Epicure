@@ -14,6 +14,8 @@ import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Option;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 public class MockCustomer {
     private Cart currentCart;
@@ -34,6 +36,18 @@ public class MockCustomer {
         return new CartDTO("cusName", cartMeals, "yes", 58.9);
     }
 
+    public MealDTO mockMealDto() {
+        List<ChoiceDTO> choiceDTOS = new ArrayList<>(1);
+        List<OptionDTO> optionDTOS = new ArrayList<>(1);
+        optionDTOS.add(new OptionDTO(1, "avocado"));
+        choiceDTOS.add(new ChoiceDTO("choice", optionDTOS, 1,3));
+        List<Label> labels = new ArrayList<>(2);
+        labels.add(Label.SPICY);
+        labels.add(Label.VEGAN);
+
+        return new MealDTO(1, "meal1", "des", labels, 15.5, choiceDTOS, "img", 1);
+    }
+
     public Meal mockMeal() {
         List<Choice> mealChoices = new ArrayList<>(1);
         List<Option> option = new ArrayList<>(1);
@@ -41,6 +55,24 @@ public class MockCustomer {
         mealChoices.add(new Choice(2, "choice", 1, 3, option));
         return new Meal(1, "meal1", "des", true, true, false, 15.5
                 , "img", "food", mealChoices);
+    }
+
+    public ChosenMeal convertedChosenMeal(Meal mockMeal, Cart cart) {
+        List<Option> options = new ArrayList<>(1);
+        options.add(new Option(1, "avocado"));
+        return new ChosenMeal(null, mockMeal, options, "img", 15.5, 1, 15.5, cart);
+    }
+
+    public ChosenMeal mockChosenMeal(Meal mockMeal, Cart cart) {
+        List<Option> options = new ArrayList<>(1);
+        options.add(new Option(1, "avocado"));
+        return new ChosenMeal(7, mockMeal, options, "img", 15.5, 1, 15.5, cart);
+    }
+
+    public CartMealDTO mockCartMeal() {
+        List<OptionDTO> optionDTOS = new ArrayList<>(1);
+        optionDTOS.add(new OptionDTO(1, "avocado"));
+        return new CartMealDTO(7, "img", 15.5, optionDTOS, 1, 15.5);
     }
 
     public Cart noMealsCart() {
@@ -82,15 +114,5 @@ public class MockCustomer {
                 , new ArrayList<>());
     }
 
-    public MealDTO mealDto() {
-        List<ChoiceDTO> choiceDTOS = new ArrayList<>(1);
-        List<OptionDTO> optionDTOS = new ArrayList<>(1);
-        optionDTOS.add(new OptionDTO(1, "avocado"));
-        choiceDTOS.add(new ChoiceDTO("choice", optionDTOS, 1,3));
-        List<Label> labels = new ArrayList<>(2);
-        labels.add(Label.SPICY);
-        labels.add(Label.VEGAN);
 
-        return new MealDTO(12, "meal1", "des", labels, 15.5, choiceDTOS, "img", 1);
-    }
 }
