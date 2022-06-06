@@ -1,4 +1,4 @@
-package com.moveo.epicure.swagger.dto;
+package com.moveo.epicure.dto;
 
 import java.util.List;
 import javax.validation.constraints.Min;
@@ -8,12 +8,14 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CartDTO {
+public class ChoiceDTO {
+
     @NotNull
-    private List<CartMealDTO> meals;
+    private String title;
     @NotNull
-    private String comment;
-    @NotNull
+    private List<OptionDTO> options;
     @Min(0)
-    private double overallPrice;
+    private Integer minChoices;
+    @Min(1)
+    private Integer maxChoices;
 }

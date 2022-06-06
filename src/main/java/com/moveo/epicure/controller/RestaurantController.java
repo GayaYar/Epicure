@@ -1,14 +1,13 @@
 package com.moveo.epicure.controller;
 
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.RestaurantDTO;
-import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RestaurantDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

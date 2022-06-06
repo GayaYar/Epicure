@@ -3,13 +3,12 @@ package com.moveo.epicure.controller;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockRestaurant;
 import com.moveo.epicure.service.RestaurantService;
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
-import com.moveo.epicure.swagger.dto.RestaurantDTO;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
+import com.moveo.epicure.dto.RestaurantDTO;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;

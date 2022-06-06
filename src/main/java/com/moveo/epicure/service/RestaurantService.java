@@ -1,8 +1,8 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.swagger.dto.MealDTO;
-import com.moveo.epicure.swagger.dto.RestaurantDTO;
-import com.moveo.epicure.swagger.dto.RestaurantBriefDTO;
+import com.moveo.epicure.dto.MealDTO;
+import com.moveo.epicure.dto.RestaurantDTO;
+import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Restaurant;
 import com.moveo.epicure.exception.LocationNotFoundException;

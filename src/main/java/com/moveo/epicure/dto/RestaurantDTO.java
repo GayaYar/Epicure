@@ -1,8 +1,7 @@
-package com.moveo.epicure.swagger.dto;
+package com.moveo.epicure.dto;
 
-
-import com.moveo.epicure.entity.Label;
 import java.util.List;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,21 +9,20 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MealDTO {
+public class RestaurantDTO {
     @NotNull
-    @Min(1)
     private Integer id;
     @NotNull
     private String name;
-    private String description;
-    private List<Label> labels;
     @NotNull
-    @Min(0)
-    private double price;
-    private List<ChoiceDTO> choices;
+    private String chefName;
+    @NotNull
+    @Min(0) @Max(5)
+    private int rating;
     @NotNull
     private String img;
     @NotNull
-    @Min(1)
-    private int quantity;
+    private boolean open;
+    @NotNull
+    private List<RestaurantMeals> meals;
 }

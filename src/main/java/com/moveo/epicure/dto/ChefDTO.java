@@ -1,6 +1,6 @@
-package com.moveo.epicure.swagger.dto;
+package com.moveo.epicure.dto;
 
-import javax.validation.constraints.Min;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,12 +10,13 @@ import org.hibernate.validator.constraints.URL;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChefBriefDTO {
-    @NotNull
-    @Min(1)
-    private Integer id;
+public class ChefDTO {
     @NotNull
     private String name;
+    @NotNull
+    private String description;
+    @NotNull
+    private List<RestaurantBriefDTO> restaurants;
     @NotNull
     @URL
     private String img;
