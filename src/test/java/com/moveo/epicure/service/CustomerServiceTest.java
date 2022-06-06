@@ -151,8 +151,16 @@ class CustomerServiceTest {
         assertEquals(service.addToCart(mockCustomer.mockMealDto()), mockCustomer.mockCartMeal());
     }
 
+    /**
+     * verifies that the method calls the repository's "deleteByIdAndCart" method
+     */
     @Test
     void deleteFromCart() {
+        Cart noMealsCart = mockCustomer.noMealsCart();
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(noMealsCart));
+        Mockito.when(detail.getId()).thenReturn(3);
+        service.deleteFromCart(6);
+        Mockito.verify(chosenMealRepo, Mockito.times(1)).deleteByIdAndCart(6, noMealsCart);
     }
 
     @Test
