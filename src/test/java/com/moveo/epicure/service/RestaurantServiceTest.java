@@ -10,7 +10,6 @@ import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
