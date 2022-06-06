@@ -14,6 +14,7 @@ import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -163,8 +164,33 @@ class CustomerServiceTest {
         Mockito.verify(chosenMealRepo, Mockito.times(1)).deleteByIdAndCart(6, noMealsCart);
     }
 
+    /**
+     * verifies that the method deletes all the chosen meals that are linked to the cart (calls the deleteByCart method)
+     */
+    @Test
+    void clearCartDeleteMeals() {
+        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
+                , null);
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(cart));
+        Mockito.when(detail.getId()).thenReturn(3);
+        service.clearCart();
+        Mockito.verify(chosenMealRepo, Mockito.times(1)).deleteByCart(cartArgumentCaptor.capture());
+        assertEquals(cartArgumentCaptor.getValue(), cart);
+    }
+
+    /**
+     * verifies that the method updates the cart and saves it with default (empty) values
+     */
     @Test
     void clearCart() {
+        Customer customer = new Customer(3, "cusName");
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of
+                (new Cart(5, true, "yes", 58.9, customer, null)));
+        Mockito.when(detail.getId()).thenReturn(3);
+        //maybe add Mockito.when
+        service.clearCart();
+        Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
+        assertEquals(cartArgumentCaptor.getValue(), new Cart(5, true, "", 0, customer, new ArrayList<>()));
     }
 
     @Test
