@@ -3,6 +3,7 @@ package com.moveo.epicure.mock;
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.ChoiceDTO;
+import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.OptionDTO;
 import com.moveo.epicure.entity.Cart;
@@ -12,7 +13,10 @@ import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.Label;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Option;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -114,5 +118,19 @@ public class MockCustomer {
                 , new ArrayList<>());
     }
 
+    public Customer mockCustomer() {
+        return new Customer(9, "mock cus", "mockCus@gmail.com", "12345678");
+    }
+
+    public LoginResponse mockResponse() {
+        String jwts = Jwts.builder()
+                .setIssuer("epicure")
+                .setSubject("9")
+                .claim("customerName", "mock cus")
+                .setIssuedAt(new Date())
+                .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg ".getBytes()))
+                .compact();
+        return new LoginResponse("mock cus", jwts);
+    }
 
 }

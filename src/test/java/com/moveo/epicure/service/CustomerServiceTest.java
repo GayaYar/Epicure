@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
@@ -14,10 +15,10 @@ import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
+import com.moveo.epicure.util.LoginResponseMaker;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -193,8 +194,26 @@ class CustomerServiceTest {
         assertEquals(cartArgumentCaptor.getValue(), new Cart(5, true, "", 0, customer, new ArrayList<>()));
     }
 
+    /**
+     * assures that if a user is not found, an empty optional is returned
+     */
     @Test
-    void login() {
+    void loginNotFound() {
+        Mockito.when(customerRepo.findByEmailAndPassword("cusName@gmail.com", passwordEncoder.encode("12345678")))
+                .thenReturn(Optional.empty());
+        assertEquals(service.login(new LoginInfo("cusName@gmail.com", passwordEncoder.encode("12345678")))
+        ,Optional.empty());
+    }
+
+    /**
+     * assures that the method returns a login response when the user is found
+     */
+    @Test
+    void loginReturnsLoginResponse() {
+        Mockito.when(customerRepo.findByEmailAndPassword("mockCus@gmail.com", passwordEncoder.encode("12345678")))
+                .thenReturn(Optional.of(mockCustomer.mockCustomer()));
+        assertEquals(service.login(new LoginInfo("mockCus@gmail.com", passwordEncoder.encode("12345678"))).get()
+        , mockCustomer.mockResponse());
     }
 
     @Test
