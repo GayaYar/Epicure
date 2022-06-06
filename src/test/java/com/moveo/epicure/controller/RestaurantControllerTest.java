@@ -24,6 +24,9 @@ public class RestaurantControllerTest {
     private RestaurantService service;
     private MockRestaurant mockRestaurant;
 
+    /**
+     * initialisation of required fields for the test
+     */
     @BeforeAll
     void setUpTest() {
         controller = new RestaurantController(service);
@@ -46,6 +49,9 @@ public class RestaurantControllerTest {
                 , 4, null, null), ResponseEntity.ok(mockBriefs));
     }
 
+    /**
+     * assures the method returns a RestaurantDto if such is found by id
+     */
     @Test
     void findByIdFound() {
         Optional<RestaurantDTO> mockOptional = Optional.of(mockRestaurant.restaurant9asDtoWithMeals());
@@ -53,6 +59,9 @@ public class RestaurantControllerTest {
         assertEquals(controller.findById(9), mockOptional.get());
     }
 
+    /**
+     * assures that if no such restaurant is found, a NotFoundException with a proper message is thrown
+     */
     @Test
     void findByIdNotFound() {
         Mockito.when(service.findById(50)).thenReturn(Optional.empty());
@@ -60,6 +69,9 @@ public class RestaurantControllerTest {
                 .hasMessage("Could not find the restaurant you were looking for.");
     }
 
+    /**
+     * assures the method returns a MealDto if such is found by id
+     */
     @Test
     void getMealFound() {
         Optional<MealDTO> mockOptional = Optional.of(mockRestaurant.meal1asDto());
@@ -67,6 +79,9 @@ public class RestaurantControllerTest {
         assertEquals(controller.findById(1), mockOptional.get());
     }
 
+    /**
+     * assures that if no such meal is found, a NotFoundException with a proper message is thrown
+     */
     @Test
     void getMealNotFound() {
         Mockito.when(service.findMeal(50)).thenReturn(Optional.empty());
