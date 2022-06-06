@@ -238,4 +238,13 @@ class CustomerServiceTest {
                 .thenReturn(mockCustomer.mockCustomer());
         assertEquals(service.signup(mockCustomer.mockRegisterInfo()), mockCustomer.mockResponse());
     }
+
+    /**
+     * assures the method returns the list returned by "cartRepo.findByCustomerIdAndCurrentFalse" in a form of dto
+     */
+    @Test
+    void getHistory() {
+        Mockito.when(cartRepo.findByCustomerIdAndCurrentFalse(3)).thenReturn(mockCustomer.mockHistory());
+        assertEquals(service.getHistory(), mockCustomer.mockHistoryDto());
+    }
 }

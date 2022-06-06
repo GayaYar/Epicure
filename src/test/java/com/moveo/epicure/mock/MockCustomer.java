@@ -139,4 +139,42 @@ public class MockCustomer {
         return new RegisterInfo(new LoginInfo("mockCus@gmail.com", "12345678"), "mock cus");
     }
 
+    public List<Cart> mockHistory() {
+        List<Cart> history = new ArrayList<>(2);
+
+        Customer customer = new Customer(3, "cusName");
+        Cart cart = new Cart(5, false, "yes", 58.9, customer, null);
+        List<Choice> mealChoices = new ArrayList<>(1);
+        List<Option> option = new ArrayList<>(1);
+        option.add(new Option(1, "avocado"));
+        mealChoices.add(new Choice(2, "choice", 1, 3, option));
+        Meal meal =  new Meal(1, "meal1", "des", true, true, false, 15.5
+                , "img", "food", mealChoices);
+        List<ChosenMeal> chosenMeals = new ArrayList<>(2);
+        chosenMeals.add(new ChosenMeal(7, meal, option, "img", 2.5, 2, 5, cart));
+        chosenMeals.add(new ChosenMeal(8, meal, option, "img", 2.5, 2, 5, cart));
+        cart.setChosenMeals(chosenMeals);
+        history.add(cart);
+
+        Cart cartB = new Cart(2, false, "message", 6.5, customer, new ArrayList<>());
+        history.add(cartB);
+
+        return history;
+    }
+
+    public List<CartDTO> mockHistoryDto() {
+        List<CartDTO> history = new ArrayList<>(2);
+
+        List<OptionDTO> optionDTOS = new ArrayList<>(1);
+                optionDTOS.add(new OptionDTO(1, "avocado"));
+        List<CartMealDTO> cartMealDTOS = new ArrayList<>(2);
+        cartMealDTOS.add(new CartMealDTO(7, "img", 2.5, optionDTOS, 2, 5));
+        cartMealDTOS.add(new CartMealDTO(8, "img", 2.5, optionDTOS, 2, 5));
+        history.add(new CartDTO("cusName", cartMealDTOS, "yes", 58.9));
+
+        history.add(new CartDTO("cusName", new ArrayList<>(), "message", 6.5));
+
+        return history;
+    }
+
 }
