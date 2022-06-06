@@ -19,27 +19,30 @@ import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-class CustomerServiceTest {
-    private CustomerService service;
+@ExtendWith(MockitoExtension.class)
+public class CustomerServiceTest {
+    private static CustomerService service;
     @Mock
-    private CustomerDetail detail;
+    private static CustomerDetail detail;
     @Mock
-    private CustomerRepo customerRepo;
+    private static CustomerRepo customerRepo;
     @Mock
-    private CartRepo cartRepo;
+    private static CartRepo cartRepo;
     @Mock
-    private MealRepo mealRepo;
+    private static MealRepo mealRepo;
     @Mock
-    private ChosenMealRepo chosenMealRepo;
+    private static ChosenMealRepo chosenMealRepo;
     @Mock
-    private PasswordEncoder passwordEncoder;
-    private MockCustomer mockCustomer;
+    private static PasswordEncoder passwordEncoder;
+    private static MockCustomer mockCustomer;
     @Captor
     private ArgumentCaptor<Cart> cartArgumentCaptor;
     @Captor
@@ -51,7 +54,7 @@ class CustomerServiceTest {
      * instantiates the necessary fields for the tests
      */
     @BeforeAll
-    void initialiseTest() {
+    static void initialiseTest() {
         service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder);
         mockCustomer = new MockCustomer();
     }
