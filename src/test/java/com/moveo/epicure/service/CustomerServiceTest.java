@@ -190,7 +190,6 @@ class CustomerServiceTest {
         Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of
                 (new Cart(5, true, "yes", 58.9, customer, null)));
         Mockito.when(detail.getId()).thenReturn(3);
-        //maybe add Mockito.when
         service.clearCart();
         Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
         assertEquals(cartArgumentCaptor.getValue(), new Cart(5, true, "", 0, customer, new ArrayList<>()));
@@ -245,6 +244,7 @@ class CustomerServiceTest {
     @Test
     void getHistory() {
         Mockito.when(cartRepo.findByCustomerIdAndCurrentFalse(3)).thenReturn(mockCustomer.mockHistory());
+        Mockito.when(detail.getId()).thenReturn(3);
         assertEquals(service.getHistory(), mockCustomer.mockHistoryDto());
     }
 }
