@@ -3,9 +3,11 @@ package com.moveo.epicure.mock;
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.ChoiceDTO;
+import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.OptionDTO;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.ChosenMeal;
@@ -131,6 +133,10 @@ public class MockCustomer {
                 .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg ".getBytes()))
                 .compact();
         return new LoginResponse("mock cus", jwts);
+    }
+
+    public RegisterInfo mockRegisterInfo() {
+        return new RegisterInfo(new LoginInfo("mockCus@gmail.com", "12345678"), "mock cus");
     }
 
 }

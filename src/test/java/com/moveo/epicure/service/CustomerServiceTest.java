@@ -45,6 +45,8 @@ class CustomerServiceTest {
     private ArgumentCaptor<Cart> cartArgumentCaptor;
     @Captor
     private ArgumentCaptor<ChosenMeal> chosenMealArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<Customer> customerArgumentCaptor;
 
     /**
      * instantiates the necessary fields for the tests
@@ -216,7 +218,24 @@ class CustomerServiceTest {
         , mockCustomer.mockResponse());
     }
 
+    /**
+     * verifies the new user is saved with all relevant fields
+     */
     @Test
-    void signup() {
+    void signupSavesUser() {
+        service.signup(mockCustomer.mockRegisterInfo());
+        Mockito.verify(customerRepo, Mockito.times(1)).save(customerArgumentCaptor.capture());
+        assertEquals(customerArgumentCaptor.getValue(),
+                new Customer("mock cus","mockCus@gmail.com", passwordEncoder.encode("12345678")));
+    }
+
+    /**
+     * assures that the method returns a login response
+     */
+    @Test
+    void signupReturnsLoginResponse() {
+        Mockito.when(customerRepo.save(new Customer("mock cus","mockCus@gmail.com", passwordEncoder.encode("12345678"))))
+                .thenReturn(mockCustomer.mockCustomer());
+        assertEquals(service.signup(mockCustomer.mockRegisterInfo()), mockCustomer.mockResponse());
     }
 }
