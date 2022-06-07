@@ -17,7 +17,7 @@ import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import java.util.ArrayList;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -29,20 +29,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
-    private static CustomerService service;
+    private CustomerService service;
     @Mock
-    private static CustomerDetail detail;
+    private CustomerDetail detail;
     @Mock
-    private static CustomerRepo customerRepo;
+    private CustomerRepo customerRepo;
     @Mock
-    private static CartRepo cartRepo;
+    private CartRepo cartRepo;
     @Mock
-    private static MealRepo mealRepo;
+    private MealRepo mealRepo;
     @Mock
-    private static ChosenMealRepo chosenMealRepo;
+    private ChosenMealRepo chosenMealRepo;
     @Mock
-    private static PasswordEncoder passwordEncoder;
-    private static MockCustomer mockCustomer;
+    private PasswordEncoder passwordEncoder;
+    private MockCustomer mockCustomer;
     @Captor
     private ArgumentCaptor<Cart> cartArgumentCaptor;
     @Captor
@@ -53,8 +53,8 @@ public class CustomerServiceTest {
     /**
      * instantiates the necessary fields for the tests
      */
-    @BeforeAll
-    static void initialiseTest() {
+    @BeforeEach
+    void initialiseTest() {
         service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder);
         mockCustomer = new MockCustomer();
     }
