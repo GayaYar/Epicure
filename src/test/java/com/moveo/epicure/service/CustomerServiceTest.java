@@ -202,9 +202,10 @@ public class CustomerServiceTest {
      */
     @Test
     void loginNotFound() {
-        Mockito.when(customerRepo.findByEmailAndPassword("cusName@gmail.com", passwordEncoder.encode("12345678")))
+        Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
+        Mockito.when(customerRepo.findByEmailAndPassword("cusName@gmail.com", "12345678"))
                 .thenReturn(Optional.empty());
-        assertEquals(service.login(new LoginInfo("cusName@gmail.com", passwordEncoder.encode("12345678")))
+        assertEquals(service.login(new LoginInfo("cusName@gmail.com", "12345678"))
         ,Optional.empty());
     }
 
@@ -213,9 +214,10 @@ public class CustomerServiceTest {
      */
     @Test
     void loginReturnsLoginResponse() {
-        Mockito.when(customerRepo.findByEmailAndPassword("mockCus@gmail.com", passwordEncoder.encode("12345678")))
+        Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
+        Mockito.when(customerRepo.findByEmailAndPassword("mockCus@gmail.com", "12345678"))
                 .thenReturn(Optional.of(mockCustomer.mockCustomer()));
-        assertEquals(service.login(new LoginInfo("mockCus@gmail.com", passwordEncoder.encode("12345678"))).get()
+        assertEquals(service.login(new LoginInfo("mockCus@gmail.com", "12345678")).get()
         , mockCustomer.mockResponse());
     }
 
@@ -224,10 +226,13 @@ public class CustomerServiceTest {
      */
     @Test
     void signupSavesUser() {
+        Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
+        Mockito.when(customerRepo.save(new Customer("mock cus", "mockCus@gmail.com", "12345678")))
+                        .thenReturn(new Customer(6, "mock cus", "mockCus@gmail.com", "12345678"));
         service.signup(mockCustomer.mockRegisterInfo());
         Mockito.verify(customerRepo, Mockito.times(1)).save(customerArgumentCaptor.capture());
         assertEquals(customerArgumentCaptor.getValue(),
-                new Customer("mock cus","mockCus@gmail.com", passwordEncoder.encode("12345678")));
+                new Customer("mock cus","mockCus@gmail.com", "12345678"));
     }
 
     /**
@@ -235,7 +240,8 @@ public class CustomerServiceTest {
      */
     @Test
     void signupReturnsLoginResponse() {
-        Mockito.when(customerRepo.save(new Customer("mock cus","mockCus@gmail.com", passwordEncoder.encode("12345678"))))
+        Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
+        Mockito.when(customerRepo.save(new Customer("mock cus","mockCus@gmail.com", "12345678")))
                 .thenReturn(mockCustomer.mockCustomer());
         assertEquals(service.signup(mockCustomer.mockRegisterInfo()), mockCustomer.mockResponse());
     }
