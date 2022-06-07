@@ -2,6 +2,7 @@ package com.moveo.epicure.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockRestaurant;
@@ -12,22 +13,26 @@ import com.moveo.epicure.dto.RestaurantDTO;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+@ExtendWith(MockitoExtension.class)
 public class RestaurantControllerTest {
-    private RestaurantController controller;
-    @Mock
-    private RestaurantService service;
-    private MockRestaurant mockRestaurant;
+    private static RestaurantController controller;
+    private static RestaurantService service;
+    private static MockRestaurant mockRestaurant;
 
     /**
      * initialisation of required fields for the test
      */
     @BeforeAll
-    void setUpTest() {
+    static void setUpTest() {
+        service = mock(RestaurantService.class);
         controller = new RestaurantController(service);
         mockRestaurant = new MockRestaurant();
     }

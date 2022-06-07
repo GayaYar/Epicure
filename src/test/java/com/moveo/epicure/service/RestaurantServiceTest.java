@@ -10,11 +10,15 @@ import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class RestaurantServiceTest {
 
     private RestaurantService service;
@@ -29,7 +33,7 @@ public class RestaurantServiceTest {
     /**
      * initialisation of required fields for the test
      */
-    @BeforeAll
+    @BeforeEach
     void setUpTest() {
         service = new RestaurantService(restaurantRepo, restaurantRepoImpl, mealRepo);
         mockRestaurant = new MockRestaurant();
