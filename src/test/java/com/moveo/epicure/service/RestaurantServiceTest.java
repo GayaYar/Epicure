@@ -123,7 +123,7 @@ public class RestaurantServiceTest {
     @Test
     void findByIdIsFoundWithMeals() {
         Mockito.when(restaurantRepo.findRestaurantWithMeals(9)).thenReturn(Optional.of(mockRestaurant.getRestaurant(9)));
-        assertTrue(service.findById(9).get().equals(mockRestaurant.restaurant9asDtoWithMeals()));
+        assertEquals(service.findById(9).get(), mockRestaurant.restaurant9asDtoWithMeals());
     }
 
     /**

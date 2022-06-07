@@ -87,7 +87,7 @@ public class MockRestaurant {
         List<MealBriefDTO> briefMeals = new ArrayList<>(2);
         briefMeals.add(new MealBriefDTO(1, "meal1", "des", 15.5, "img"));
         briefMeals.add(new MealBriefDTO(2, "meal2", "des", 15.5, "img"));
-        restaurantMeals.add(new RestaurantMeals("breakfast", briefMeals));
+        restaurantMeals.add(new RestaurantMeals("food", briefMeals));
         return new RestaurantDTO(9, "name", "yossi", 2, "img", true, restaurantMeals);
     }
 
