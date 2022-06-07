@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("restaurants")
 @Validated
 public class RestaurantController {
-    @Autowired
     private RestaurantService service;
+
+    public RestaurantController(RestaurantService service) {
+        this.service = service;
+    }
 
     @GetMapping(value = "/popular")
     public ResponseEntity<List<RestaurantBriefDTO>> getPopularRestaurants(@RequestParam(required = false) @Min(0) Integer amount) {
@@ -40,7 +43,7 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<RestaurantDTO> findById(@PathVariable Integer id) {
+    public ResponseEntity<RestaurantDTO> findById(@PathVariable @Min(0) Integer id) {
         Optional<RestaurantDTO> optionalRestaurant = service.findById(id);
         if(optionalRestaurant.isEmpty()) {
             throw new NotFoundException("restaurant");
@@ -49,7 +52,7 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/meals/{id}")
-    public ResponseEntity<MealDTO> getMeal(@PathVariable Integer id) {
+    public ResponseEntity<MealDTO> getMeal(@PathVariable @Min(0) Integer id) {
         Optional<MealDTO> optionalMeal = service.findMeal(id);
         if(optionalMeal.isEmpty()) {
             throw new NotFoundException("meal");

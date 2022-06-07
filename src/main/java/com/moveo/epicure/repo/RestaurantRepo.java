@@ -24,5 +24,5 @@ public interface RestaurantRepo extends JpaRepository<Restaurant, Integer> {
     Optional<Integer> findIdByName(String name);
 
     @Query(QueryUtil.searchByName)
-    List<Restaurant> searchRestaurnts(@Param("name") String name);
+    List<Restaurant> searchRestaurants(@Param("name") String name);
 }
