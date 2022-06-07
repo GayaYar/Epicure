@@ -58,9 +58,9 @@ public class RestaurantControllerTest {
      */
     @Test
     void findByIdFound() {
-        Optional<RestaurantDTO> mockOptional = Optional.of(mockRestaurant.restaurant9asDtoWithMeals());
-        Mockito.when(service.findById(9)).thenReturn(mockOptional);
-        assertEquals(controller.findById(9), mockOptional.get());
+        RestaurantDTO restaurantDTO = mockRestaurant.restaurant9asDtoWithMeals();
+        Mockito.when(service.findById(9)).thenReturn(Optional.of(restaurantDTO));
+        assertEquals(controller.findById(9), ResponseEntity.ok(restaurantDTO));
     }
 
     /**
