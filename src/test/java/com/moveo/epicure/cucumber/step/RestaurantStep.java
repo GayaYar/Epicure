@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.mock.MockRestaurant;
 import com.moveo.epicure.repo.RestaurantRepo;
+
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
@@ -22,15 +23,15 @@ public class RestaurantStep {
     private RestaurantRepo repo;
     private List<RestaurantBriefDTO> expected;
     private List<RestaurantBriefDTO> actual;
-    private MockRestaurant mockRestaurant;
+    private static MockRestaurant mockRestaurant;
 
     @BeforeAll
-    private void initialiseTest() {
+    public static void initialiseTest() {
         mockRestaurant = new MockRestaurant();
     }
 
     @Before
-    private void beforeEach() {
+    public void beforeEach() {
         expected = new ArrayList<>();
         actual = new ArrayList<>();
         repo.deleteAll();
