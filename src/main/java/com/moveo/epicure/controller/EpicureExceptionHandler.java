@@ -1,5 +1,7 @@
 package com.moveo.epicure.controller;
 
+import com.moveo.epicure.exception.AccountBlockedException;
+import com.moveo.epicure.exception.AccountStillBlockedException;
 import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.exception.NotFoundException;
@@ -37,5 +39,17 @@ public class EpicureExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDetail handleNull(NullException e) {
         return new ErrorDetail(ErrorCode.NULL_EXCEPTION.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(AccountBlockedException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorDetail handleBlockedAccount(AccountBlockedException e) {
+        return new ErrorDetail((ErrorCode.ACCOUNT_BLOCKED.getCode()), e.getMessage());
+    }
+
+    @ExceptionHandler(AccountStillBlockedException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorDetail handleStillBlockedAccount(AccountStillBlockedException e) {
+        return new ErrorDetail((ErrorCode.ACCOUNT_STILL_BLOCKED.getCode()), e.getMessage());
     }
 }
