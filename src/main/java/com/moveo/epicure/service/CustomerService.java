@@ -12,6 +12,7 @@ import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.NotFoundException;
+import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
@@ -39,6 +40,8 @@ public class CustomerService {
     private ChosenMealRepo chosenMealRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AttemptRepo attemptRepo;
 
     /**
      * Gets the customer's current cart.
@@ -103,6 +106,9 @@ public class CustomerService {
     }
 
     public Optional<LoginResponse> login(LoginInfo info) {
+        if(customerRepo.existsByEmail(info.getEmail())) {
+            //complete later
+        }
         Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail()
                 , passwordEncoder.encode(info.getPassword()));
         if(optionalCustomer.isPresent()) {
