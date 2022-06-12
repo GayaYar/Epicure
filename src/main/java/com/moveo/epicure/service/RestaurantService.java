@@ -15,28 +15,35 @@ import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class RestaurantService {
     private RestaurantRepo restaurantRepo;
     private RestaurantRepoImpl restaurantRepoImpl;
     private MealRepo mealRepo;
+    private String fileName;
 
     public RestaurantService(RestaurantRepo restaurantRepo, RestaurantRepoImpl restaurantRepoImpl, MealRepo mealRepo) {
         this.restaurantRepo = restaurantRepo;
         this.restaurantRepoImpl = restaurantRepoImpl;
         this.mealRepo = mealRepo;
+        fileName = "[RestaurantService:";
     }
 
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
+        log.debug(fileName+"getPopulars]");
         List<Restaurant> populars;
         if(amount == null) {
+            log.debug(fileName+"getPopulars] amount is null, looking for top 3");
             populars = restaurantRepo.findTop3ByOrderByPopularityDesc();
         } else {
+            log.debug(fileName+"getPopulars] looking for top "+amount);
             populars = restaurantRepoImpl.findOrderByPopularityLimitedTo(amount);
         }
         return populars.stream().map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
@@ -59,7 +66,9 @@ public class RestaurantService {
      */
     public List<RestaurantBriefDTO> getAllSorted(Integer minPrice, Integer maxPrice, Boolean newest, Double longitude
             , Double latitude, Integer distance, Boolean open, Integer rating) {
+        log.debug(fileName+"getAllSorted]");
         if(distance != null && (longitude==null || latitude==null)){
+            log.error(fileName+"getAllSorted] distance is requested but no valid location is given");
             throw new LocationNotFoundException();
         }
 
@@ -85,6 +94,7 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public Optional<RestaurantDTO> findById(Integer id) {
+        log.debug(fileName+"findById] id="+id);
         NullUtil.validate(id);
         Optional<Restaurant> optionalRest = restaurantRepo.findRestaurantWithMeals(id);
         return optionalRest.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.restaurantToDto(optionalRest.get()));
@@ -92,6 +102,7 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public Optional<MealDTO> findMeal(Integer id) {
+        log.debug(fileName+"findMeal] id="+id);
         NullUtil.validate(id);
         Optional<Meal> optionalMeal = mealRepo.findMealWithChoices(id);
         return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
