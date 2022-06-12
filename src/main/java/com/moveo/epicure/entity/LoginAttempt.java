@@ -21,4 +21,9 @@ public class LoginAttempt {
     @NotNull
     private LocalDateTime time;
     private boolean blocked;
+
+    public LoginAttempt(String mail, LocalDateTime time) {
+        this.mail = mail;
+        this.time = time;
+    }
 }

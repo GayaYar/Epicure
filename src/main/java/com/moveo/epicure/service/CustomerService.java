@@ -10,6 +10,7 @@ import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
+import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.AttemptRepo;
@@ -19,6 +20,9 @@ import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.LoginResponseMaker;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -105,16 +109,50 @@ public class CustomerService {
         cartRepo.save(currentCart);
     }
 
+    /**
+     * Creates a login response if the info is correct and the email is not blocked.
+     * Blocked emails are ones that have failed to log in at least 10 times in the last 30 minutes and are blocked for 30 minutes since the 10th time.
+     * If the email exists but the password is incorrect (a failed login attempt)-saves the failed attempt, as well as if it blocks the email.
+     * @param info
+     * @return the login response (optional) if the email is not blocked and the info is correct
+     */
     public Optional<LoginResponse> login(LoginInfo info) {
-        if(customerRepo.existsByEmail(info.getEmail())) {
-            //complete later
+        String email = info.getEmail();
+        LocalDateTime now = LocalDateTime.now();
+
+        if (customerRepo.existsByEmail(email) && !lastAttemptStillBlocked(email, now)) {
+            Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(email
+                    , passwordEncoder.encode(info.getPassword()));
+            if (optionalCustomer.isPresent()) {
+                return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
+            }else {
+                saveFailedAttempt(email, now);
+            }
         }
-        Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail()
-                , passwordEncoder.encode(info.getPassword()));
-        if(optionalCustomer.isPresent()) {
-            return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
-        }
+
         return Optional.empty();
+    }
+
+    private boolean lastAttemptStillBlocked(String email, LocalDateTime now) {
+        Optional<LoginAttempt> optionalLastAttempt = attemptRepo.findTop1ByMailOrderByTimeDesc(email);
+        if(optionalLastAttempt.isPresent()) {
+            LoginAttempt loginAttempt = optionalLastAttempt.get();
+            if (loginAttempt.isBlocked() && lessThan30minsDifferance(now, loginAttempt.getTime())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean lessThan30minsDifferance(LocalDateTime time1, LocalDateTime time2) {
+        return Math.abs(Duration.between(time1, time2).getSeconds())<1800;
+    }
+
+    private void saveFailedAttempt(String email, LocalDateTime now) {
+        LoginAttempt attempt = new LoginAttempt(email, now);
+        List<LoginAttempt> last9attempts = attemptRepo.findTop9ByMailOrderByTimeDesc(email);
+        attempt.setBlocked(last9attempts.size()>=9 && lessThan30minsDifferance(now, last9attempts.get(8).getTime()));
+        attemptRepo.save(attempt);
     }
 
     public LoginResponse signup(RegisterInfo info) {
