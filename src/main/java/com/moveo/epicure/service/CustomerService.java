@@ -13,7 +13,6 @@ import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.AccountBlockedException;
-import com.moveo.epicure.exception.AccountStillBlockedException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.CartRepo;
@@ -123,43 +122,24 @@ public class CustomerService {
         LocalDateTime now = LocalDateTime.now();
 
         if (customerRepo.existsByEmail(email)) {
-            long timeLeft = blockedTimeLeft(email, now);
-            if(timeLeft>0) {
-                throw new AccountStillBlockedException(timeLeft);
+            if(accountIsBlocked(email, now)) {
+                throw new AccountBlockedException();
             }
             Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(email
                     , passwordEncoder.encode(info.getPassword()));
             if (optionalCustomer.isPresent()) {
                 return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
             }else {
-                saveFailedAttempt(email, now);
-                throw new AccountBlockedException();
+                attemptRepo.save(new LoginAttempt(email, now));
             }
         }
 
         return Optional.empty();
     }
 
-    private long blockedTimeLeft(String email, LocalDateTime now) {
-        Optional<LoginAttempt> optionalLastAttempt = attemptRepo.findTop1ByMailOrderByTimeDesc(email);
-        if(optionalLastAttempt.isPresent()) {
-            LoginAttempt loginAttempt = optionalLastAttempt.get();
-            if (loginAttempt.isBlocked() && lessThan30minsDifferance(now, loginAttempt.getTime())) {
-                return Duration.between(now, loginAttempt.getTime().plusMinutes(30)).toMinutes();
-            }
-        }
-        return 0;
-    }
-
-    private boolean lessThan30minsDifferance(LocalDateTime time1, LocalDateTime time2) {
-        return Math.abs(Duration.between(time1, time2).toMinutes())<30;
-    }
-
-    private void saveFailedAttempt(String email, LocalDateTime now) {
-        LoginAttempt attempt = new LoginAttempt(email, now);
+    private boolean accountIsBlocked(String email, LocalDateTime now) {
         List<LoginAttempt> last9attempts = attemptRepo.findTop9ByMailOrderByTimeDesc(email);
-        attempt.setBlocked(last9attempts.size()>=9 && lessThan30minsDifferance(now, last9attempts.get(8).getTime()));
-        attemptRepo.save(attempt);
+        return last9attempts.size()>=9 && Duration.between(last9attempts.get(8).getTime(), now).toMinutes()<30;
     }
 
     public LoginResponse signup(RegisterInfo info) {

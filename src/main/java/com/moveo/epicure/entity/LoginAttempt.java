@@ -20,7 +20,6 @@ public class LoginAttempt {
     private String mail;
     @NotNull
     private LocalDateTime time;
-    private boolean blocked;
 
     public LoginAttempt(String mail, LocalDateTime time) {
         this.mail = mail;
