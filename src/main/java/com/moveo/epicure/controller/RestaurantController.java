@@ -7,6 +7,7 @@ import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,8 +51,9 @@ public class RestaurantController {
             @RequestParam(required = false) @Min(0) Integer maxPrice, @RequestParam(required = false) Boolean newest
             , @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double latitude
             , @RequestParam(required = false) @Min(0) Integer distance, @RequestParam(required = false) Boolean open
-            , @RequestParam(required = false) Integer rating, @RequestParam @Min(0) int page, @RequestParam @Min(0) int size) {
-        Pageable pageRequest = PageRequest.of(page, size);
+            , @RequestParam(required = false) Integer rating, @RequestParam(required = false) @Min(0) Integer page
+            , @RequestParam(required = false) @Min(0) @Max(100) Integer size) {
+        Pageable pageRequest = PageRequest.of(page==null?0:page, size==null?20:size);
         return ResponseEntity.ok(service.getAllSortedPageable(minPrice, maxPrice, newest, longitude, latitude, distance
                 , open, rating, pageRequest));
     }
