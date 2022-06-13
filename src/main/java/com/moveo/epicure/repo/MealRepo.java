@@ -1,6 +1,7 @@
 package com.moveo.epicure.repo;
 
 import com.moveo.epicure.entity.Meal;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface MealRepo extends JpaRepository<Meal, Integer> {
     @Query("SELECT m FROM Meal m JOIN FETCH m.choices WHERE m.id=:id")
     Optional<Meal> findMealWithChoices(@Param("id") Integer id);
+
+    List<Meal> findBySignatureTrue();
 }
