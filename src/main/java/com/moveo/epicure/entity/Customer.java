@@ -2,6 +2,8 @@ package com.moveo.epicure.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,12 +16,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class Customer extends User{
+public class Customer{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull
     private String name;
+    @NotNull
+    @Pattern(regexp = "^(.+)@(\\S+)$", message = "invalid email address")
+    @Column(unique = true)
+    private String email;
+    @NotNull
+    @Size(min = 4)
+    private String password;
+    @Enumerated(value = EnumType.STRING)
+    private PermittedType type;
 
     public Customer(Integer id) {
         this.id = id;
