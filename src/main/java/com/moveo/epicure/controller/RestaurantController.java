@@ -1,5 +1,6 @@
 package com.moveo.epicure.controller;
 
+import com.moveo.epicure.annotation.PermissionNeeded;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RestaurantDTO;
 import com.moveo.epicure.dto.RestaurantBriefDTO;
@@ -61,6 +62,7 @@ public class RestaurantController {
         return ResponseEntity.ok(optionalMeal.get());
     }
 
+    @PermissionNeeded
     @PutMapping
     public ResponseEntity<RestaurantDTO> addRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
         return ResponseEntity.ok(service.addRestaurant(restaurantDTO));

@@ -2,6 +2,8 @@ package com.moveo.epicure.entity;
 
 import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -9,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.usertype.UserType;
 
 @Entity
 @Data
@@ -17,11 +20,12 @@ import lombok.NoArgsConstructor;
 public class Permit {
     @Id
     @NotNull
-    private String userType;
+    @Enumerated(value = EnumType.STRING)
+    private PermittedType userType;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<PermittedMethod> methods;
 
-    public Permit(String userType) {
+    public Permit(PermittedType userType) {
         this.userType = userType;
     }
 
