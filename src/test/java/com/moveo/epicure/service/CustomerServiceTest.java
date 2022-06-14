@@ -1,23 +1,28 @@
 package com.moveo.epicure.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
+import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.mock.MockCustomer;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -56,8 +61,20 @@ class CustomerServiceTest {
         mockCustomer = new MockCustomer();
     }
 
-    //take this instead of other login methods
+    //login tests with limit
     @Test
     void loginReturnsEmptyWhenEmailDoesNotExist() {
+        LoginInfo info = new LoginInfo("notexisting@mail.com", "a-password");
+        Mockito.when(customerRepo.existsByEmail("notexisting@mail.com")).thenReturn(false);
+        assertEquals(service.login(info), Optional.empty());
+    }
+
+    //login tests with limit
+    @Test
+    void loginThrowsExceptionWhenAccountBlocked() {
+        LoginInfo info = new LoginInfo("blocked@mail.com", "a-password");
+        Mockito.when(customerRepo.existsByEmail("blocked@mail.com")).thenReturn(true);
+        Mockito.when(attemptRepo.findTop9ByMailOrderByTimeDesc("blocked@mail.com")).thenReturn(mockCustomer.getBlockedAttempt());
+        assertThatThrownBy(()->{service.login(info);}).isInstanceOf(AccountBlockedException.class);
     }
 }
