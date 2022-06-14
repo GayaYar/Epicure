@@ -9,6 +9,7 @@ import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.NullUtil;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import com.moveo.epicure.repo.MealRepo;
@@ -95,5 +96,12 @@ public class RestaurantService {
         NullUtil.validate(id);
         Optional<Meal> optionalMeal = mealRepo.findMealWithChoices(id);
         return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
+    }
+
+    public RestaurantDTO addRestaurant(RestaurantDTO restaurantDTO) {
+        Restaurant restaurant = restaurantRepo.save(
+                new Restaurant(restaurantDTO.getName(), restaurantDTO.getRating(), restaurantDTO.getImg(),
+                        restaurantDTO.isOpen(), 0, 5.5, 5.5, 1, new Date()));
+        return DtoMapper.restaurantToDto(restaurant);
     }
 }

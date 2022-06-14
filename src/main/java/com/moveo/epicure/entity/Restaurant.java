@@ -18,12 +18,14 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,4 +58,18 @@ public class Restaurant {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Meal> meals;
 
+
+    public Restaurant(String name, int rating, String img, boolean open, int popularity, double latitude,
+            double longitude,
+            int price, Date creation) {
+        this.name = name;
+        this.rating = rating;
+        this.img = img;
+        this.open = open;
+        this.popularity = popularity;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.price = price;
+        this.creation = creation;
+    }
 }
