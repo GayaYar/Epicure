@@ -14,20 +14,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class Customer extends User{
+public class Admin extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @NotNull
     private String name;
 
-    public Customer(Integer id) {
-        this.id = id;
-    }
-
-    public Customer(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
 }
