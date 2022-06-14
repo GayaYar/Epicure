@@ -25,7 +25,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,20 +32,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class CustomerService {
-    @Autowired
     private CustomerDetail detail;
-    @Autowired
     private CustomerRepo customerRepo;
-    @Autowired
     private CartRepo cartRepo;
-    @Autowired
     private MealRepo mealRepo;
-    @Autowired
     private ChosenMealRepo chosenMealRepo;
-    @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
     private AttemptRepo attemptRepo;
+
+    public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
+            ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo) {
+        this.detail = detail;
+        this.customerRepo = customerRepo;
+        this.cartRepo = cartRepo;
+        this.mealRepo = mealRepo;
+        this.chosenMealRepo = chosenMealRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.attemptRepo = attemptRepo;
+    }
 
     /**
      * Gets the customer's current cart.
