@@ -1,5 +1,6 @@
 package com.moveo.epicure.service;
 
+import com.moveo.epicure.dto.AdminRestaurantDto;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RestaurantDTO;
 import com.moveo.epicure.dto.RestaurantBriefDTO;
@@ -98,10 +99,11 @@ public class RestaurantService {
         return optionalMeal.isEmpty() ? Optional.empty() : Optional.of(DtoMapper.mealToDto(optionalMeal.get()));
     }
 
-    public RestaurantDTO addRestaurant(RestaurantDTO restaurantDTO) {
+    public AdminRestaurantDto addRestaurant(AdminRestaurantDto restaurantDTO) {
         Restaurant restaurant = restaurantRepo.save(
                 new Restaurant(restaurantDTO.getName(), restaurantDTO.getRating(), restaurantDTO.getImg(),
-                        restaurantDTO.isOpen(), 0, 5.5, 5.5, 1, new Date()));
-        return DtoMapper.restaurantToDto(restaurant);
+                        restaurantDTO.isOpen(), restaurantDTO.getPopularity(), restaurantDTO.getLatitude(),
+                        restaurantDTO.getLongitude(), restaurantDTO.getPrice(), new Date()));
+        return DtoMapper.restaurantToAdminRestaurant(restaurant);
     }
 }
