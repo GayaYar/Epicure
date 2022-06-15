@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+
     private UserRepo repo;
     private PasswordEncoder passwordEncoder;
 
@@ -20,19 +21,25 @@ public class UserService {
     }
 
     public Optional<LoginResponse> login(String email, String password) {
-        Optional<User> optionalCustomer = repo.findByEmailAndPassword(email, passwordEncoder.encode(password));
-        if(optionalCustomer.isPresent()) {
-            return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
+        Optional<User> optionalUser = repo.findByEmailAndPassword(email, passwordEncoder.encode(password));
+        if (optionalUser.isPresent()) {
+            return Optional.of(LoginResponseMaker.make(optionalUser.get()));
         }
         return Optional.empty();
     }
 
     public LoginResponse signup(String email, String password, String name) {
-        if(repo.existsByEmail(email)) {
+        if (repo.existsByEmail(email)) {
             throw new AlreadyExistsException("email");
         }
-            User customer = repo.save(new User(name, email, passwordEncoder.encode(password)));
-            return LoginResponseMaker.make(customer);
+        User user = repo.save(new User(name, email, passwordEncoder.encode(password)));
+        return LoginResponseMaker.make(user);
+    }
 
+    public void saveAdmin(String email, String password, String name) {
+        if (repo.existsByEmail(email)) {
+            throw new AlreadyExistsException("email");
+        }
+        repo.save(new User(name, email, passwordEncoder.encode(password), "ADMIN"));
     }
 }

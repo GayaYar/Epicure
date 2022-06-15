@@ -4,6 +4,7 @@ import com.moveo.epicure.entity.Permit;
 import com.moveo.epicure.entity.User;
 import com.moveo.epicure.repo.PermitRepo;
 import com.moveo.epicure.repo.UserRepo;
+import com.moveo.epicure.service.UserService;
 import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.boot.SpringApplication;
@@ -19,11 +20,14 @@ public class EpicureApplication {
 		if(permitRepo.findAll().isEmpty()) {
 			permitRepo.save(new Permit("ADMIN", Arrays.asList("addRestaurant")));
 		}
-		UserRepo userRepo = context.getBean(UserRepo.class);
-		Optional<User> userOptional = userRepo.findByEmailAndPassword("admin@mail.com", "test-admin");
-		if(!(userOptional.isPresent() && userOptional.get().getUserType().equals("ADMIN"))){
-			userRepo.save(new User("admin", "admin@mail.com", "test-admin", "ADMIN"));
-		}
+
+		//saving admin for test
+//		UserService userService = context.getBean(UserService.class);
+//		if(userService.login("admin1@mail.com", "test-admin").isEmpty()) {
+//			userService.saveAdmin("admin1@mail.com", "test-admin", "admin1");
+//		}
+
+		System.out.println("heloooooooooooooooo");
 	}
 
 }
