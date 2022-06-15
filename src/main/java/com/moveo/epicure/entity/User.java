@@ -35,6 +35,13 @@ public class User {
         this.id = id;
     }
 
+    public User(String name, String email, String password, String userType) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.userType = userType;
+    }
+
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
