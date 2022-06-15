@@ -7,6 +7,8 @@ import com.moveo.epicure.dto.RestaurantDTO;
 import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.Min;
@@ -65,6 +67,9 @@ public class RestaurantController {
 
     @PermissionNeeded
     @PutMapping(value = "/add")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header") })
     public ResponseEntity<AdminRestaurantDto> addRestaurant(@RequestBody AdminRestaurantDto restaurant) {
         return ResponseEntity.ok(service.addRestaurant(restaurant));
     }
