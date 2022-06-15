@@ -64,7 +64,7 @@ public class RestaurantController {
     }
 
     @PermissionNeeded
-    @PutMapping
+    @PutMapping(value = "/add")
     public ResponseEntity<AdminRestaurantDto> addRestaurant(@RequestBody AdminRestaurantDto restaurant) {
         return ResponseEntity.ok(service.addRestaurant(restaurant));
     }
