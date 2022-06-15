@@ -1,5 +1,6 @@
 package com.moveo.epicure.controller;
 
+import com.moveo.epicure.exception.AlreadyExistsException;
 import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.exception.NoPermitException;
@@ -52,4 +53,11 @@ public class EpicureExceptionHandler {
     public ErrorDetail handleNoPermit(ProcessException e) {
         return new ErrorDetail(ErrorCode.NO_PERMIT.getCode(), e.getMessage());
     }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDetail handleAlreadyExists(AlreadyExistsException e) {
+        return new ErrorDetail(ErrorCode.ALREADY_EXISTS.getCode(), e.getMessage());
+    }
+
 }

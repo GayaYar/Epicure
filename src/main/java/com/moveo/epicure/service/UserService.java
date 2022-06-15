@@ -2,6 +2,7 @@ package com.moveo.epicure.service;
 
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.entity.User;
+import com.moveo.epicure.exception.AlreadyExistsException;
 import com.moveo.epicure.repo.UserRepo;
 import com.moveo.epicure.util.LoginResponseMaker;
 import java.util.Optional;
@@ -27,7 +28,11 @@ public class UserService {
     }
 
     public LoginResponse signup(String email, String password, String name) {
-        User customer = repo.save(new User(name, email, passwordEncoder.encode(password)));
-        return LoginResponseMaker.make(customer);
+        if(repo.existsByEmail(email)) {
+            throw new AlreadyExistsException("email");
+        }
+            User customer = repo.save(new User(name, email, passwordEncoder.encode(password)));
+            return LoginResponseMaker.make(customer);
+
     }
 }
