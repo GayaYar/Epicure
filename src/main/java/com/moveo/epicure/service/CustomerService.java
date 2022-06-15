@@ -3,10 +3,7 @@ package com.moveo.epicure.service;
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.CustomerDetail;
-import com.moveo.epicure.dto.LoginInfo;
-import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.MealDTO;
-import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.User;
@@ -14,13 +11,10 @@ import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
-import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
-import com.moveo.epicure.util.LoginResponseMaker;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,15 +24,12 @@ public class CustomerService {
     @Autowired
     private CustomerDetail detail;
     @Autowired
-    private CustomerRepo customerRepo;
-    @Autowired
     private CartRepo cartRepo;
     @Autowired
     private MealRepo mealRepo;
     @Autowired
     private ChosenMealRepo chosenMealRepo;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
 
     /**
      * Gets the customer's current cart.
@@ -102,19 +93,5 @@ public class CustomerService {
         cartRepo.save(currentCart);
     }
 
-    public Optional<LoginResponse> login(LoginInfo info) {
-        Optional<User> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail()
-                , passwordEncoder.encode(info.getPassword()));
-        if(optionalCustomer.isPresent()) {
-            return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
-        }
-        return Optional.empty();
-    }
-
-    public LoginResponse signup(RegisterInfo info) {
-        LoginInfo loginInfo = info.getLoginInfo();
-        User customer = customerRepo.save(new User(info.getName(), loginInfo.getEmail()
-                , passwordEncoder.encode(loginInfo.getPassword())));
-        return LoginResponseMaker.make(customer);
-    }
+    //move limit login to user
 }

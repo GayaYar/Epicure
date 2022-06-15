@@ -60,18 +60,4 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginInfo info) {
-        Optional<LoginResponse> optionalResponse = service.login(info);
-        if(optionalResponse.isEmpty()) {
-            throw new IncorrectLoginException();
-        }
-        return ResponseEntity.ok(optionalResponse.get());
-    }
-
-    @PostMapping
-    public ResponseEntity<LoginResponse> signup(@Valid @RequestBody RegisterInfo info) {
-        return ResponseEntity.ok(service.signup(info));
-    }
-
 }
