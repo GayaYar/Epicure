@@ -24,8 +24,9 @@ public class Permit {
     @NotNull
     private String permissions;
 
-    public Permit(String userType) {
+    public Permit(String userType, List<String> permissionList) {
         this.userType = userType;
+        setPermissionList(permissionList);
     }
 
     public void setPermissionList(List<String> permissionList) {
