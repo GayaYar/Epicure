@@ -22,10 +22,10 @@ public class EpicureApplication {
 		}
 
 		//saving admin for test
-//		UserService userService = context.getBean(UserService.class);
-//		if(userService.login("admin1@mail.com", "test-admin").isEmpty()) {
-//			userService.saveAdmin("admin1@mail.com", "test-admin", "admin1");
-//		}
+		UserService userService = context.getBean(UserService.class);
+		if(userService.login("admin1@mail.com", "test-admin").isEmpty()) {
+			userService.saveAdmin("admin1@mail.com", "test-admin", "admin1");
+		}
 
 	}
 
