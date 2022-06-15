@@ -21,8 +21,8 @@ public class UserService {
     }
 
     public Optional<LoginResponse> login(String email, String password) {
-        Optional<User> optionalUser = repo.findByEmailAndPassword(email, passwordEncoder.encode(password));
-        if (optionalUser.isPresent()) {
+        Optional<User> optionalUser = repo.findByEmail(email);
+        if (optionalUser.isPresent() && passwordEncoder.matches(password, optionalUser.get().getPassword())) {
             return Optional.of(LoginResponseMaker.make(optionalUser.get()));
         }
         return Optional.empty();

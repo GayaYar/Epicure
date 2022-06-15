@@ -27,7 +27,6 @@ public class EpicureApplication {
 //			userService.saveAdmin("admin1@mail.com", "test-admin", "admin1");
 //		}
 
-		System.out.println("heloooooooooooooooo");
 	}
 
 }
