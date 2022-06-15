@@ -1,17 +1,17 @@
 package com.moveo.epicure.entity;
 
-import java.util.Set;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.moveo.epicure.exception.ProcessException;
+import com.moveo.epicure.util.ObjectMapperSingleton;
+import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.usertype.UserType;
+
 
 @Entity
 @Data
@@ -20,13 +20,24 @@ import org.hibernate.usertype.UserType;
 public class Permit {
     @Id
     @NotNull
-    @Enumerated(value = EnumType.STRING)
-    private PermittedType userType;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<PermittedMethod> methods;
+    private String userType;
+    @NotNull
+    private String permissions;
 
-    public Permit(PermittedType userType) {
+    public Permit(String userType) {
         this.userType = userType;
+    }
+
+    public void setPermissionList(List<String> permissionList) {
+        try {
+            permissions = ObjectMapperSingleton.get().writeValueAsString(permissionList);
+        } catch (JsonProcessingException e) {
+            throw new ProcessException();
+        }
+    }
+
+    public List<String> getPermissionList() {
+        return ObjectMapperSingleton.get().readValue(permissions, new TypeReference<List<String>>() {});
     }
 
 }

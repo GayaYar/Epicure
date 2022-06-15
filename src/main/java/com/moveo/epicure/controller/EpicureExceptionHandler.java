@@ -4,6 +4,7 @@ import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.exception.NullException;
+import com.moveo.epicure.exception.ProcessException;
 import com.moveo.epicure.exception.model.ErrorCode;
 import com.moveo.epicure.exception.model.ErrorDetail;
 import org.springframework.http.HttpStatus;
@@ -37,5 +38,11 @@ public class EpicureExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDetail handleNull(NullException e) {
         return new ErrorDetail(ErrorCode.NULL_EXCEPTION.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(ProcessException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDetail handleProcess(ProcessException e) {
+        return new ErrorDetail(ErrorCode.PROCESS.getCode(), e.getMessage());
     }
 }
