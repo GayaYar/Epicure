@@ -37,7 +37,11 @@ public class Permit {
     }
 
     public List<String> getPermissionList() {
-        return ObjectMapperSingleton.get().readValue(permissions, new TypeReference<List<String>>() {});
+        try {
+            return ObjectMapperSingleton.get().readValue(permissions, List.class);
+        } catch (JsonProcessingException e) {
+            throw new ProcessException();
+        }
     }
 
 }
