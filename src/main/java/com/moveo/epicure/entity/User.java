@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class Customer{
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -29,16 +29,32 @@ public class Customer{
     @NotNull
     @Size(min = 4)
     private String password;
-    @Enumerated(value = EnumType.STRING)
-    private PermittedType type;
+    private String userType;
 
-    public Customer(Integer id) {
+    public User(Integer id) {
         this.id = id;
     }
 
-    public Customer(String name, String email, String password) {
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+        defaultType();
+    }
+
+    public String getUserType() {
+        defaultType();
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+        defaultType();
+    }
+
+    private void defaultType() {
+        if(userType==null) {
+            userType = "CUSTOMER";
+        }
     }
 }

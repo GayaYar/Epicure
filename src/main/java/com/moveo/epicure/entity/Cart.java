@@ -31,11 +31,11 @@ public class Cart {
     private double overallPrice;
     @OneToOne
     @NotNull
-    private Customer customer;
+    private User customer;
     @OneToMany(fetch = FetchType.LAZY)
     private List<ChosenMeal> chosenMeals;
 
-    public Cart(boolean current, Customer customer) {
+    public Cart(boolean current, User customer) {
         this.current = current;
         this.customer = customer;
         defaultValues();

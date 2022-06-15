@@ -9,7 +9,7 @@ import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
-import com.moveo.epicure.entity.Customer;
+import com.moveo.epicure.entity.User;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.CartRepo;
@@ -52,7 +52,7 @@ public class CustomerService {
         if(optionalCart.isPresent()) {
             return optionalCart.get();
         }
-        return cartRepo.save(new Cart(true, new Customer(customerId)));
+        return cartRepo.save(new Cart(true, new User(customerId)));
     }
 
     public CartDTO getCart() {
@@ -103,7 +103,7 @@ public class CustomerService {
     }
 
     public Optional<LoginResponse> login(LoginInfo info) {
-        Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail()
+        Optional<User> optionalCustomer = customerRepo.findByEmailAndPassword(info.getEmail()
                 , passwordEncoder.encode(info.getPassword()));
         if(optionalCustomer.isPresent()) {
             return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
@@ -113,7 +113,7 @@ public class CustomerService {
 
     public LoginResponse signup(RegisterInfo info) {
         LoginInfo loginInfo = info.getLoginInfo();
-        Customer customer = customerRepo.save(new Customer(info.getName(), loginInfo.getEmail()
+        User customer = customerRepo.save(new User(info.getName(), loginInfo.getEmail()
                 , passwordEncoder.encode(loginInfo.getPassword())));
         return LoginResponseMaker.make(customer);
     }

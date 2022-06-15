@@ -1,13 +1,7 @@
 package com.moveo.epicure;
 
-import com.moveo.epicure.entity.Permit;
-import com.moveo.epicure.entity.PermittedMethod;
-import com.moveo.epicure.entity.PermittedType;
 import com.moveo.epicure.repo.PermitRepo;
 import com.moveo.epicure.repo.PermittedMethodRepo;
-import java.util.HashSet;
-import java.util.Set;
-import org.hibernate.usertype.UserType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

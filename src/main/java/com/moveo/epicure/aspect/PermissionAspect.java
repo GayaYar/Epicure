@@ -13,11 +13,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Aspect
 @Component
 public class PermissionAspect {
-    @Around("@annotation(PermissionNeeded)")
-    public ResponseEntity checkPermit(ProceedingJoinPoint joinPoint) {
-        final HttpServletRequest httpRequest =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String token = httpRequest.getHeader("Authorization");
-        token = token.substring(7);
-    }
+//    @Around("@annotation(PermissionNeeded)")
+//    public ResponseEntity checkPermit(ProceedingJoinPoint joinPoint) {
+//        final HttpServletRequest httpRequest =
+//                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+//        String token = httpRequest.getHeader("Authorization");
+//        token = token.substring(7);
+
+    // joinPoint.getSignature().getName()
+//    }
 }
