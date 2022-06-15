@@ -2,6 +2,7 @@ package com.moveo.epicure.filter;
 
 
 import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.util.TokenUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
@@ -29,13 +30,8 @@ public class EpicureTokenFilter implements Filter, ApplicationContextAware {
         if (method.equals("OPTIONS")) {
             filterChain.doFilter(httpRequest, httpResponse);
         } else {
-            String token = httpRequest.getHeader("Authorization");
-            try {
-                token = token.substring(7);
-                Claims claims = Jwts.parserBuilder()
-                        .setSigningKey("dfjbv87yfni4rht8hvfhb8r7eyehrdljfcnvbefjhisfhuisfuehghbgruonjv".getBytes())
-                        .build().parseClaimsJws(token).getBody();
-
+            try{
+                Claims claims = TokenUtil.validateAndGetClaims(httpRequest);
                 CustomerDetail customerDetail = context.getBean(CustomerDetail.class);
                 customerDetail.setId(Integer.parseInt(claims.getSubject()));
 

@@ -16,7 +16,7 @@ public class LoginResponseMaker {
                 .setSubject("" + id)
                 .claim("userType", userType)
                 .setIssuedAt(new Date())
-                .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg ".getBytes()))
+                .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg".getBytes()))
                 .compact();
         return new LoginResponse(name, jwts);
     }

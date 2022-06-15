@@ -2,6 +2,7 @@ package com.moveo.epicure.controller;
 
 import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.LocationNotFoundException;
+import com.moveo.epicure.exception.NoPermitException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.exception.NullException;
 import com.moveo.epicure.exception.ProcessException;
@@ -44,5 +45,11 @@ public class EpicureExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDetail handleProcess(ProcessException e) {
         return new ErrorDetail(ErrorCode.PROCESS.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(NoPermitException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDetail handleNoPermit(ProcessException e) {
+        return new ErrorDetail(ErrorCode.NO_PERMIT.getCode(), e.getMessage());
     }
 }
