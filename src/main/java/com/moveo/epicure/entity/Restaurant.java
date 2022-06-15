@@ -18,14 +18,12 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
