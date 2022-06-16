@@ -13,4 +13,5 @@ import org.springframework.web.context.annotation.RequestScope;
 @NoArgsConstructor
 public class CustomerDetail {
     private Integer id;
+    private String name;
 }

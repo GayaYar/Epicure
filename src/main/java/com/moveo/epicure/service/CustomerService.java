@@ -18,7 +18,9 @@ import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.LoginResponseMaker;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,18 +29,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class CustomerService {
-    @Autowired
     private CustomerDetail detail;
-    @Autowired
     private CustomerRepo customerRepo;
-    @Autowired
     private CartRepo cartRepo;
-    @Autowired
     private MealRepo mealRepo;
-    @Autowired
     private ChosenMealRepo chosenMealRepo;
-    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
+            ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder) {
+        this.detail = detail;
+        this.customerRepo = customerRepo;
+        this.cartRepo = cartRepo;
+        this.mealRepo = mealRepo;
+        this.chosenMealRepo = chosenMealRepo;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Gets the customer's current cart.
@@ -47,22 +53,23 @@ public class CustomerService {
      */
     private Cart getCurrentCart(boolean withMeals) {
         Integer customerId = detail.getId();
-        Optional<Cart> optionalCart = withMeals ? cartRepo.findByCustomerIdAndCurrentTrue(customerId) :
-                cartRepo.findCurrentWithMeals(customerId);
+        Optional<Cart> optionalCart = withMeals ? cartRepo.findCurrentWithMeals(customerId) :
+                cartRepo.findByCustomerIdAndCurrentTrue(customerId);
         if(optionalCart.isPresent()) {
             return optionalCart.get();
         }
-        return cartRepo.save(new Cart(true, new Customer(customerId)));
+        return cartRepo.save(new Cart(true, new Customer(customerId, detail.getName())));
     }
 
     public CartDTO getCart() {
         return DtoMapper.cartToDto(getCurrentCart(true));
     }
 
-    public CartDTO updateCartComment(String comment) {
+    public String updateCartComment(String comment) {
         Cart currentCart = getCurrentCart(false);
         currentCart.setComment(comment);
-        return DtoMapper.cartToDto(cartRepo.save(currentCart));
+        cartRepo.save(currentCart);
+        return comment;
     }
 
     public void buyCart() {
@@ -116,5 +123,10 @@ public class CustomerService {
         Customer customer = customerRepo.save(new Customer(info.getName(), loginInfo.getEmail()
                 , passwordEncoder.encode(loginInfo.getPassword())));
         return LoginResponseMaker.make(customer);
+    }
+
+    public List<CartDTO> getHistory() {
+        return cartRepo.findByCustomerIdAndCurrentFalse(detail.getId()).stream().map(DtoMapper::cartToDto).collect(
+                Collectors.toList());
     }
 }
