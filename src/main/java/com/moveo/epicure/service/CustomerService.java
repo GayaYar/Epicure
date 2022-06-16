@@ -21,6 +21,7 @@ import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.LoginResponseMaker;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,9 @@ public class CustomerService {
     private ChosenMealRepo chosenMealRepo;
     private PasswordEncoder passwordEncoder;
     private AttemptRepo attemptRepo;
+    private static final long ALLOWED_ATTEMPTS = 10;
+    private static final int ATTEMPT_MINUTES = 30;
+
 
     public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
             ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo) {
@@ -138,8 +142,8 @@ public class CustomerService {
     }
 
     private boolean emailExistsNotBlocked(String email, LocalDateTime now) {
-        List<LoginAttempt> last9attempts = attemptRepo.findTop9ByMailOrderByTimeDesc(email);
-        boolean blocked = last9attempts.size()>=9 && Duration.between(last9attempts.get(8).getTime(), now).toMinutes()<30;
+        long attemptCount = attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now));
+        boolean blocked = attemptCount>=ALLOWED_ATTEMPTS;
         return customerRepo.existsByEmail(email) && !blocked;
     }
 
