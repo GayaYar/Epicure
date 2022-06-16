@@ -124,10 +124,7 @@ public class CustomerService {
         String email = info.getEmail();
         LocalDateTime now = LocalDateTime.now();
 
-        if (customerRepo.existsByEmail(email)) {
-            if(accountIsBlocked(email, now)) {
-                throw new AccountBlockedException();
-            }
+        if (emailExistsNotBlocked(email, now)) {
             Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(email
                     , passwordEncoder.encode(info.getPassword()));
             if (optionalCustomer.isPresent()) {
@@ -140,9 +137,10 @@ public class CustomerService {
         return Optional.empty();
     }
 
-    private boolean accountIsBlocked(String email, LocalDateTime now) {
+    private boolean emailExistsNotBlocked(String email, LocalDateTime now) {
         List<LoginAttempt> last9attempts = attemptRepo.findTop9ByMailOrderByTimeDesc(email);
-        return last9attempts.size()>=9 && Duration.between(last9attempts.get(8).getTime(), now).toMinutes()<30;
+        boolean blocked = last9attempts.size()>=9 && Duration.between(last9attempts.get(8).getTime(), now).toMinutes()<30;
+        return customerRepo.existsByEmail(email) && !blocked;
     }
 
     public LoginResponse signup(RegisterInfo info) {
