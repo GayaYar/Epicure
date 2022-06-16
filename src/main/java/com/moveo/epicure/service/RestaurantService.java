@@ -15,6 +15,8 @@ import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.repo.RestaurantRepo;
 import com.moveo.epicure.repo.RestaurantRepoImpl;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +68,18 @@ public class RestaurantService {
         return restaurantRepo.findByParams(minPrice==null?0:minPrice, maxPrice==null?Integer.MAX_VALUE:maxPrice
                         , longitude==null?0:longitude, latitude==null?0:latitude, distance==null?Integer.MAX_VALUE:distance
                         , open==null?false:open, rating == null ? 1 : rating)
+                .stream().sorted(restaurantComparator(newest)).map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
+    }
+
+    public List<RestaurantBriefDTO> getAllSortedPageable(Integer minPrice, Integer maxPrice, Boolean newest, Double longitude
+            , Double latitude, Integer distance, Boolean open, Integer rating, Pageable pageable) {
+        if(distance != null && (longitude==null || latitude==null)){
+            throw new LocationNotFoundException();
+        }
+
+        return restaurantRepo.findByParamsPage(minPrice==null?0:minPrice, maxPrice==null?Integer.MAX_VALUE:maxPrice
+                        , longitude==null?0:longitude, latitude==null?0:latitude, distance==null?Integer.MAX_VALUE:distance
+                        , open==null?false:open, rating == null ? 1 : rating, pageable)
                 .stream().sorted(restaurantComparator(newest)).map(DtoMapper::restaurantToBriefDto).collect(Collectors.toList());
     }
 
