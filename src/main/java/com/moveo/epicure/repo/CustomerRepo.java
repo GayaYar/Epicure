@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface CustomerRepo extends JpaRepository<Customer, Integer> {
 
     Optional<Customer> findByEmailAndPassword(String email, String password);
+    boolean existsByEmail(String email);
 }

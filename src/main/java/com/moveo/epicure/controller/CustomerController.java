@@ -61,9 +61,10 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
+    //on merge- get validated version
     @GetMapping
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginInfo info) {
-        Optional<LoginResponse> optionalResponse = service.login(info);
+    public ResponseEntity<LoginResponse> login(@RequestParam String email, @RequestParam String password) {
+        Optional<LoginResponse> optionalResponse = service.login(email, password);
         if(optionalResponse.isEmpty()) {
             throw new IncorrectLoginException();
         }

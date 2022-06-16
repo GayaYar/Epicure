@@ -1,5 +1,4 @@
 package com.moveo.epicure.mock;
-
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.ChoiceDTO;
