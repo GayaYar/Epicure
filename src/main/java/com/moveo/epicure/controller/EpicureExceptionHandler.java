@@ -50,7 +50,7 @@ public class EpicureExceptionHandler {
 
     @ExceptionHandler(NoPermitException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorDetail handleNoPermit(ProcessException e) {
+    public ErrorDetail handleNoPermit(NoPermitException e) {
         return new ErrorDetail(ErrorCode.NO_PERMIT.getCode(), e.getMessage());
     }
 

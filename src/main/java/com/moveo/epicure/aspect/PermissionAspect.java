@@ -38,19 +38,38 @@ public class PermissionAspect {
     public ResponseEntity checkPermit(ProceedingJoinPoint joinPoint) throws Throwable {
         final HttpServletRequest httpRequest =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        System.out.println("request found");
         boolean permitted = false;
         try {
             Claims claims = TokenUtil.validateAndGetClaims(httpRequest);
+            System.out.println("claims: "+claims);
             String userType = claims.get("userType").toString();
+            System.out.println("user type: "+userType);
             String methodName = joinPoint.getSignature().getName();
+            System.out.println("method name: "+methodName);
             List<String> permissionList = repo.findById(userType).get().getPermissionList();
+            System.out.println("permission list: ");
+            System.out.println(permissionList);
             permitted = permissionList.contains(methodName);
+            System.out.println("permitted= "+permitted);
         } catch (Exception e) {
+            System.out.println("throwing exception from catch");
+            System.out.println(e);
             throw new NoPermitException();
         }
         if (!permitted) {
+            System.out.println("throwing exception from lack of permission");
             throw new NoPermitException();
         }
-        return (ResponseEntity) joinPoint.proceed();
+        try{
+            Object proceed = joinPoint.proceed();
+            System.out.println("result: "+proceed);
+            boolean instance = proceed instanceof ResponseEntity;
+            System.out.println("is instance of response entity: "+instance);
+            return (ResponseEntity) proceed;
+        } catch (Exception e) {
+            System.out.println("exception thrown while proceed");
+        }
+        return null;
     }
 }
