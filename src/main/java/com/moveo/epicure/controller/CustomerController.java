@@ -8,6 +8,7 @@ import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.service.CustomerService;
+import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart")
-    public ResponseEntity<CartDTO> updateCart(@Valid @RequestBody String cartComment) {
+    public ResponseEntity<String> updateCart(@Valid @RequestBody String cartComment) {
         return ResponseEntity.ok(service.updateCartComment(cartComment));
     }
 
@@ -60,9 +61,10 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
+    //on merge- get validated version
     @GetMapping
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginInfo info) {
-        Optional<LoginResponse> optionalResponse = service.login(info);
+    public ResponseEntity<LoginResponse> login(@RequestParam String email, @RequestParam String password) {
+        Optional<LoginResponse> optionalResponse = service.login(email, password);
         if(optionalResponse.isEmpty()) {
             throw new IncorrectLoginException();
         }
@@ -72,6 +74,11 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<LoginResponse> signup(@Valid @RequestBody RegisterInfo info) {
         return ResponseEntity.ok(service.signup(info));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<CartDTO>> getHistory() {
+        return ResponseEntity.ok(service.getHistory());
     }
 
 }
