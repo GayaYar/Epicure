@@ -14,7 +14,9 @@ public class TokenUtil {
      */
     public static Claims validateAndGetClaims(HttpServletRequest httpRequest) throws Exception{
         String token = httpRequest.getHeader("Authorization");
-        token = token.substring(7);
+        if(token.startsWith("bearer:")) {
+            token = token.substring(7);
+        }
         return Jwts.parserBuilder()
                 .setSigningKey("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg".getBytes())
                 .build().parseClaimsJws(token).getBody();

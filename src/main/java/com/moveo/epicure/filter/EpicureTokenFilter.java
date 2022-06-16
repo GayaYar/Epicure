@@ -36,6 +36,7 @@ public class EpicureTokenFilter implements Filter, ApplicationContextAware {
                 customerDetail.setId(Integer.parseInt(claims.getSubject()));
 
             } catch (Exception e) {
+                //System.out.println("inside filter catch");
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
             filterChain.doFilter(httpRequest, httpResponse);
