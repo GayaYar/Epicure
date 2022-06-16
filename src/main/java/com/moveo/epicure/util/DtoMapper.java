@@ -28,8 +28,12 @@ import java.util.stream.Collectors;
 
 public class DtoMapper {
     public static CartDTO cartToDto(Cart cart) {
-        return new CartDTO(cart.getChosenMeals().stream().map(chosenMeal -> {return chosenMealToCartMeal(chosenMeal);}).collect(
-                Collectors.toList()), cart.getComment(), cart.getOverallPrice());
+        return new CartDTO(cart.getCustomer().getName(), mapListIfExists(cart.getChosenMeals()), cart.getComment(), cart.getOverallPrice());
+    }
+
+    private static List<CartMealDTO> mapListIfExists(List<ChosenMeal> chosenMeals) {
+        return chosenMeals==null ? new ArrayList<>() : chosenMeals.stream().map(chosenMeal -> {return chosenMealToCartMeal(chosenMeal);}).collect(
+                Collectors.toList());
     }
 
     public static CartMealDTO chosenMealToCartMeal(ChosenMeal chosenMeal) {

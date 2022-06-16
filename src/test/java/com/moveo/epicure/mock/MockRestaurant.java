@@ -20,10 +20,12 @@ import java.util.List;
 public class MockRestaurant {
     private List<Restaurant> allRestaurants;
     private List<RestaurantBriefDTO> allBriefs;
+    private String imgUrl;
 
     public MockRestaurant() {
         allRestaurants = allRestaurantsInitialise();
         allBriefs = allBriefInitialise();
+        imgUrl = "https://camo.githubusercontent.com/56ea24702a43a27f55794275849e38c16cd393e244a59297a71266b9b34e3e53/68747470733a2f2f617368616c6c656e64657369676e2e636f2e756b2f696d616765732f637573746f6d2f73686f72742d75726c2d6c6f676f2e706e67";
     }
 
     private List<Restaurant> allRestaurantsInitialise() {
@@ -63,6 +65,31 @@ public class MockRestaurant {
         return restaurants;
     }
 
+    public List<Restaurant> noMealsRestaurants(Chef mockChef) {
+        List<Restaurant> restaurants = new ArrayList<>(10);
+        restaurants.add(new Restaurant(null, "name0", mockChef, 1, imgUrl, true, 10
+                , 1.5, 80.3, 2, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name1", mockChef, 2, imgUrl, false, 3
+                , 1.5, 80.3, 2, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name2", mockChef, 2, imgUrl, true, 4
+                , 1.5, 80.3, 2, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name3", mockChef, 2, imgUrl, false, 5
+                , 1.5, 80.3, 4, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name4", mockChef, 5, imgUrl, false, 6
+                , 1.5, 80.3, 1, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name5", mockChef, 3, imgUrl, true, 2
+                , 1.5, 80.3, 3, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name6", mockChef, 4, imgUrl, true, 25
+                , 1.5, 80.3, 1, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name7", mockChef, 2, imgUrl, false, 12
+                , 20.5, 83.3, 2, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name8", mockChef, 2, imgUrl, true, 17
+                , 21.5, 83.3, 2, new Date(), new ArrayList<>()));
+        restaurants.add(new Restaurant(null, "name9", mockChef, 2, imgUrl, true, 18
+                , 21.5, 83.3, 2, new Date(), new ArrayList<>()));
+        return restaurants;
+    }
+
     private List<RestaurantBriefDTO> allBriefInitialise() {
         List<RestaurantBriefDTO> briefs = new ArrayList<>(10);
         briefs.add(new RestaurantBriefDTO(0, "name", "yossi", 1, "img"));
@@ -87,7 +114,7 @@ public class MockRestaurant {
         List<MealBriefDTO> briefMeals = new ArrayList<>(2);
         briefMeals.add(new MealBriefDTO(1, "meal1", "des", 15.5, "img"));
         briefMeals.add(new MealBriefDTO(2, "meal2", "des", 15.5, "img"));
-        restaurantMeals.add(new RestaurantMeals("breakfast", briefMeals));
+        restaurantMeals.add(new RestaurantMeals("food", briefMeals));
         return new RestaurantDTO(9, "name", "yossi", 2, "img", true, restaurantMeals);
     }
 
