@@ -65,10 +65,11 @@ public class CustomerService {
         return DtoMapper.cartToDto(getCurrentCart(true));
     }
 
-    public void updateCartComment(String comment) {
+    public String updateCartComment(String comment) {
         Cart currentCart = getCurrentCart(false);
         currentCart.setComment(comment);
         cartRepo.save(currentCart);
+        return comment;
     }
 
     public void buyCart() {

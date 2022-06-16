@@ -35,9 +35,8 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart")
-    public ResponseEntity<Void> updateCart(@Valid @RequestBody String cartComment) {
-        service.updateCartComment(cartComment);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> updateCart(@Valid @RequestBody String cartComment) {
+        return ResponseEntity.ok(service.updateCartComment(cartComment));
     }
 
     @PostMapping(value="/order")
