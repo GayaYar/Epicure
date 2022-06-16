@@ -32,12 +32,12 @@ public class RestaurantService {
         this.restaurantRepo = restaurantRepo;
         this.restaurantRepoImpl = restaurantRepoImpl;
         this.mealRepo = mealRepo;
-        fileName = "[RestaurantService:";
+        fileName = "RestaurantService:";
     }
 
     @Transactional(readOnly = true)
     public List<RestaurantBriefDTO> getPopulars(Integer amount) {
-        log.debug(fileName+"getPopulars]");
+        log.debug(fileName+"getPopulars] is called with amount="+amount);
         List<Restaurant> populars;
         if(amount == null) {
             log.debug(fileName+"getPopulars] amount is null, looking for top 3");
@@ -66,7 +66,8 @@ public class RestaurantService {
      */
     public List<RestaurantBriefDTO> getAllSorted(Integer minPrice, Integer maxPrice, Boolean newest, Double longitude
             , Double latitude, Integer distance, Boolean open, Integer rating) {
-        log.debug(fileName+"getAllSorted]");
+        log.debug(fileName+"getAllSorted] is called with minPrice="+minPrice+", maxPrice="+maxPrice+", newest="+newest
+                +", longitude="+longitude+", latitude="+latitude+", distance="+distance+", open="+open+", rating="+rating);
         if(distance != null && (longitude==null || latitude==null)){
             log.error(fileName+"getAllSorted] distance is requested but no valid location is given");
             throw new LocationNotFoundException();
