@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.moveo.epicure.dto.CustomerDetail;
 import com.moveo.epicure.dto.LoginInfo;
+import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
@@ -21,6 +22,7 @@ import com.moveo.epicure.repo.MealRepo;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,14 +72,12 @@ public class CustomerServiceTest {
         now = LocalDateTime.now();
     }
 
-    //login tests with limit
     @Test
     void loginReturnsEmptyWhenEmailDoesNotExist() {
         Mockito.when(customerRepo.existsByEmail("notexisting@mail.com")).thenReturn(false);
         assertEquals(service.login("notexisting@mail.com", "a-password", now), Optional.empty());
     }
 
-    //login tests with limit
     @Test
     void loginWhenBlockedThrowsExceptionAndDoesNotSaveAttempt() {
         String email = "blocked@mail.com";
@@ -93,21 +93,18 @@ public class CustomerServiceTest {
         }
     }
 
-    //login tests with limit
     @Test
     void loginSuccessful() {
         String email = "mockCus@gmail.com";
         String password = "12345678";
-        LoginInfo info = new LoginInfo(email, password);
         Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
         Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
                 .thenReturn(2l);
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.of(new Customer(1, "bob", email, password)));
+        Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.of(new Customer(9, "mock cus", email, password)));
         assertEquals(service.login(email, password, now), Optional.of(mockCustomer.mockResponse()));
     }
 
-    //login tests with limit
     @Test
     void loginFailedReturnsEmptyAndSavesAttempt() {
         String email = "mockCus@gmail.com";
@@ -145,6 +142,7 @@ public class CustomerServiceTest {
         Mockito.when(detail.getId()).thenReturn(5);
         Mockito.when(detail.getName()).thenReturn("cusName");
         Mockito.when(cartRepo.findCurrentWithMeals(5)).thenReturn(Optional.empty());
+        Mockito.when(cartRepo.save(new Cart(true, new Customer(5, "cusName")))).thenReturn(mockCustomer.emptyCart());
         service.getCart();
         Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
         assertEquals(cartArgumentCaptor.getValue(), mockCustomer.emptyCart());
