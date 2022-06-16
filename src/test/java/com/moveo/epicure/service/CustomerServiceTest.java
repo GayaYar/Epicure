@@ -16,6 +16,7 @@ import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -56,6 +57,7 @@ class CustomerServiceTest {
     private ArgumentCaptor<Customer> customerArgumentCaptor;
     @Captor
     private ArgumentCaptor<LoginAttempt> attemptArgumentCaptor;
+    private LocalDateTime now;
 
     /**
      * instantiates the necessary fields for the tests
@@ -64,24 +66,26 @@ class CustomerServiceTest {
     void initialiseTest() {
         service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder, attemptRepo);
         mockCustomer = new MockCustomer();
+        now = LocalDateTime.now();
     }
 
     //login tests with limit
     @Test
     void loginReturnsEmptyWhenEmailDoesNotExist() {
-        LoginInfo info = new LoginInfo("notexisting@mail.com", "a-password");
         Mockito.when(customerRepo.existsByEmail("notexisting@mail.com")).thenReturn(false);
-        assertEquals(service.login(info), Optional.empty());
+        assertEquals(service.login("notexisting@mail.com", "a-password", now), Optional.empty());
     }
 
     //login tests with limit
     @Test
     void loginWhenBlockedThrowsExceptionAndDoesNotSaveAttempt() {
-        LoginInfo info = new LoginInfo("blocked@mail.com", "a-password");
-        Mockito.when(customerRepo.existsByEmail("blocked@mail.com")).thenReturn(true);
-        Mockito.when(attemptRepo.findTop9ByMailOrderByTimeDesc("blocked@mail.com")).thenReturn(mockCustomer.getBlockedAttempt());
+        String email = "blocked@mail.com";
+        String password = "a-password";
+        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
+        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
+                .thenReturn(12l);
         try {
-            service.login(info);
+            service.login(email, password, now);
         }catch (Exception e) {
             assertEquals(e.getClass(), AccountBlockedException.class);
             Mockito.verify(attemptRepo, Mockito.times(0)).save(Mockito.any());
@@ -95,10 +99,11 @@ class CustomerServiceTest {
         String password = "12345678";
         LoginInfo info = new LoginInfo(email, password);
         Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.findTop9ByMailOrderByTimeDesc(email)).thenReturn(mockCustomer.getNotBlockedAttempt());
+        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
+                .thenReturn(2l);
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
         Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.of(new Customer(1, "bob", email, password)));
-        assertEquals(service.login(info), Optional.of(mockCustomer.mockResponse()));
+        assertEquals(service.login(email, password, now), Optional.of(mockCustomer.mockResponse()));
     }
 
     //login tests with limit
@@ -108,15 +113,16 @@ class CustomerServiceTest {
         String password = "12345678";
         LoginInfo info = new LoginInfo(email, password);
         Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.findTop9ByMailOrderByTimeDesc(email)).thenReturn(mockCustomer.getNotBlockedAttempt());
+        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
+                .thenReturn(2l);
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
         Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.empty());
-        service.login(info);
+        service.login(email, password, now);
         Mockito.verify(attemptRepo, Mockito.times(1)).save(attemptArgumentCaptor.capture());
         LoginAttempt captorValue = attemptArgumentCaptor.getValue();
         LoginAttempt expected = new LoginAttempt(email, LocalDateTime.now());
         assertTrue(captorValue.getMail().equals(expected.getMail()) &&
                 Duration.between(captorValue.getTime(), expected.getTime()).toMinutes()<1);
-        assertEquals(service.login(info), Optional.empty());
+        assertEquals(service.login(email, password, now), Optional.empty());
     }
 }

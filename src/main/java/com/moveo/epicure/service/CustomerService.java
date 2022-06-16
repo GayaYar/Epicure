@@ -121,16 +121,24 @@ public class CustomerService {
      * Creates a login response if the info is correct and the email is not blocked.
      * Blocked emails are ones that have failed to log in at least 10 times in the last 30 minutes and are blocked for 30 minutes since the 10th time.
      * If the email exists but the password is incorrect (a failed login attempt)-saves the failed attempt, as well as if it blocks the email.
-     * @param info
+     * @param email
+     * @param password
      * @return the login response (optional) if the email is not blocked and the info is correct
      */
-    public Optional<LoginResponse> login(LoginInfo info) {
-        String email = info.getEmail();
-        LocalDateTime now = LocalDateTime.now();
+    public Optional<LoginResponse> login(String email, String password) {
+        return loginLogic(email, password, LocalDateTime.now());
+    }
 
+    private boolean emailExistsNotBlocked(String email, LocalDateTime now) {
+        long attemptCount = attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now));
+        boolean blocked = attemptCount>=ALLOWED_ATTEMPTS;
+        return customerRepo.existsByEmail(email) && !blocked;
+    }
+
+    private Optional<LoginResponse> loginLogic(String email, String password, LocalDateTime now) {
         if (emailExistsNotBlocked(email, now)) {
             Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(email
-                    , passwordEncoder.encode(info.getPassword()));
+                    , passwordEncoder.encode(password));
             if (optionalCustomer.isPresent()) {
                 return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
             }else {
@@ -141,10 +149,8 @@ public class CustomerService {
         return Optional.empty();
     }
 
-    private boolean emailExistsNotBlocked(String email, LocalDateTime now) {
-        long attemptCount = attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now));
-        boolean blocked = attemptCount>=ALLOWED_ATTEMPTS;
-        return customerRepo.existsByEmail(email) && !blocked;
+    public Optional<LoginResponse> login(String email, String password, LocalDateTime now) {
+        return loginLogic(email, password, now);
     }
 
     public LoginResponse signup(RegisterInfo info) {
