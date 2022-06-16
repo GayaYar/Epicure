@@ -68,9 +68,9 @@ public class RestaurantController {
 
     @PermissionNeeded
     @PutMapping(value = "/add")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
-                    required = true, dataType = "string", paramType = "header") })
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+//                    required = true, dataType = "string", paramType = "header") })
     public ResponseEntity<AdminRestaurantDto> addRestaurant(@Valid @RequestBody AdminRestaurantDto restaurant) {
         return ResponseEntity.ok(service.addRestaurant(restaurant));
     }

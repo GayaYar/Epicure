@@ -52,9 +52,7 @@ public class PermissionAspect {
         if (!permitted) {
             throw new NoPermitException();
         }
-        Object proceed = joinPoint.proceed();
-        boolean instance = proceed instanceof ResponseEntity;
-        return (ResponseEntity) proceed;
+        return (ResponseEntity) joinPoint.proceed();
         
     }
 }
