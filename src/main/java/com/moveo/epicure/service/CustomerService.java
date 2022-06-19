@@ -13,6 +13,7 @@ import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.entity.Meal;
+import com.moveo.epicure.entity.Option;
 import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.AttemptRepo;
@@ -43,7 +44,7 @@ public class CustomerService {
     private AttemptRepo attemptRepo;
     private EmailSender emailSender;
     private static final long ALLOWED_ATTEMPTS = 10;
-    private static final int ATTEMPT_MINUTES = 30;
+    private static final long ATTEMPT_MINUTES = 30;
 
     public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
             ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo,
@@ -137,26 +138,27 @@ public class CustomerService {
         return loginLogic(email, password, now);
     }
 
-    private boolean validateEmail(String email, LocalDateTime now) {
-        if(customerRepo.existsByEmail(email)) {
-            long attemptCount = attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(ATTEMPT_MINUTES)), Timestamp.valueOf(now));
+    private Optional<Customer> getValidCustomer(String email, LocalDateTime now) {
+        Optional<Customer> optionalCustomer = customerRepo.findByEmail(email);
+        if(optionalCustomer.isPresent()) {
+            long attemptCount = attemptRepo.countByMailInTime(email, now.minusMinutes(ATTEMPT_MINUTES), now);
             if(attemptCount>=ALLOWED_ATTEMPTS) {
                 emailSender.messageAdmin("Blocked user attempts to login", "User with email: "+email
                         +" has made more than "+ALLOWED_ATTEMPTS+" failed login attempts in the last "+ATTEMPT_MINUTES+" minutes.");
                 throw new AccountBlockedException();
             }else {
-                return true;
+                return optionalCustomer;
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     private Optional<LoginResponse> loginLogic(String email, String password, LocalDateTime now) {
-        if (validateEmail(email, now)) {
-            Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(email
-                    , passwordEncoder.encode(password));
-            if (optionalCustomer.isPresent()) {
-                return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
+        Optional<Customer> validCustomer = getValidCustomer(email, now);
+        if (validCustomer.isPresent()) {
+            Customer customer = validCustomer.get();
+            if (passwordEncoder.matches(password, customer.getPassword())) {
+                return Optional.of(LoginResponseMaker.make(customer));
             }else {
                 attemptRepo.save(new LoginAttempt(email, now));
             }

@@ -11,7 +11,7 @@ public class TokenFilterConfig {
     public FilterRegistrationBean<EpicureTokenFilter> registerFilter() {
         FilterRegistrationBean<EpicureTokenFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(epicureTokenFilter());
-        registrationBean.addUrlPatterns("/customers/*");
+        registrationBean.addUrlPatterns("/customers/cart/*", "/customers/order");
         registrationBean.setOrder(1);
         return registrationBean;
     }
