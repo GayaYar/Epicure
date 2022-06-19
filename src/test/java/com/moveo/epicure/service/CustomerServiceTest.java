@@ -86,7 +86,7 @@ public class CustomerServiceTest {
         String email = "blocked@mail.com";
         String password = "a-password";
         Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
+        Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
                 .thenReturn(12l);
         try {
             service.login(email, password, now);
@@ -101,10 +101,10 @@ public class CustomerServiceTest {
         String email = "mockCus@gmail.com";
         String password = "12345678";
         Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
+        Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
                 .thenReturn(2l);
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.of(new Customer(9, "mock cus", email, password)));
+        Mockito.when(customerRepo.findByEmail(email)).thenReturn(Optional.of(new Customer(9, "mock cus", email, password)));
         assertEquals(service.login(email, password, now), Optional.of(mockCustomer.mockResponse()));
     }
 
@@ -112,12 +112,11 @@ public class CustomerServiceTest {
     void loginFailedReturnsEmptyAndSavesAttempt() {
         String email = "mockCus@gmail.com";
         String password = "12345678";
-        LoginInfo info = new LoginInfo(email, password);
         Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
+        Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
                 .thenReturn(2l);
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.empty());
+        Mockito.when(customerRepo.findByEmail(email)).thenReturn(Optional.empty());
         service.login(email, password, now);
         Mockito.verify(attemptRepo, Mockito.times(1)).save(attemptArgumentCaptor.capture());
         LoginAttempt captorValue = attemptArgumentCaptor.getValue();
