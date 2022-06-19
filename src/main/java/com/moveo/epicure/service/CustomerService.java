@@ -1,5 +1,6 @@
 package com.moveo.epicure.service;
 
+import com.moveo.epicure.aws.EmailSender;
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.CustomerDetail;
@@ -12,6 +13,7 @@ import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.entity.Meal;
+import com.moveo.epicure.entity.Option;
 import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.AttemptRepo;
@@ -22,7 +24,6 @@ import com.moveo.epicure.repo.MealRepo;
 import com.moveo.epicure.util.DtoMapper;
 import com.moveo.epicure.util.LoginResponseMaker;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,12 +42,13 @@ public class CustomerService {
     private ChosenMealRepo chosenMealRepo;
     private PasswordEncoder passwordEncoder;
     private AttemptRepo attemptRepo;
+    private EmailSender emailSender;
     private static final long ALLOWED_ATTEMPTS = 10;
-    private static final int ATTEMPT_MINUTES = 30;
-
+    private static final long ATTEMPT_MINUTES = 30;
 
     public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
-            ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo) {
+            ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo,
+            EmailSender emailSender) {
         this.detail = detail;
         this.customerRepo = customerRepo;
         this.cartRepo = cartRepo;
@@ -54,16 +56,7 @@ public class CustomerService {
         this.chosenMealRepo = chosenMealRepo;
         this.passwordEncoder = passwordEncoder;
         this.attemptRepo = attemptRepo;
-    }
-
-    public CustomerService(CustomerDetail detail, CustomerRepo customerRepo, CartRepo cartRepo, MealRepo mealRepo,
-            ChosenMealRepo chosenMealRepo, PasswordEncoder passwordEncoder) {
-        this.detail = detail;
-        this.customerRepo = customerRepo;
-        this.cartRepo = cartRepo;
-        this.mealRepo = mealRepo;
-        this.chosenMealRepo = chosenMealRepo;
-        this.passwordEncoder = passwordEncoder;
+        this.emailSender = emailSender;
     }
 
     /**
@@ -141,28 +134,36 @@ public class CustomerService {
         return loginLogic(email, password, LocalDateTime.now());
     }
 
-    private boolean emailExistsNotBlocked(String email, LocalDateTime now) {
-        long attemptCount = attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now));
-        boolean blocked = attemptCount>=ALLOWED_ATTEMPTS;
-        return customerRepo.existsByEmail(email) && !blocked;
+    public Optional<LoginResponse> login(String email, String password, LocalDateTime now) {
+        return loginLogic(email, password, now);
+    }
+
+    private Optional<Customer> getValidCustomer(String email, LocalDateTime now) {
+        Optional<Customer> optionalCustomer = customerRepo.findByEmail(email);
+        if(optionalCustomer.isPresent()) {
+            long attemptCount = attemptRepo.countByMailInTime(email, now.minusMinutes(ATTEMPT_MINUTES), now);
+            if(attemptCount>=ALLOWED_ATTEMPTS) {
+                emailSender.messageAdmin("Blocked user attempts to login", "User with email: "+email
+                        +" has made more than "+ALLOWED_ATTEMPTS+" failed login attempts in the last "+ATTEMPT_MINUTES+" minutes.");
+                throw new AccountBlockedException();
+            }else {
+                return optionalCustomer;
+            }
+        }
+        return Optional.empty();
     }
 
     private Optional<LoginResponse> loginLogic(String email, String password, LocalDateTime now) {
-        if (emailExistsNotBlocked(email, now)) {
-            Optional<Customer> optionalCustomer = customerRepo.findByEmailAndPassword(email
-                    , passwordEncoder.encode(password));
-            if (optionalCustomer.isPresent()) {
-                return Optional.of(LoginResponseMaker.make(optionalCustomer.get()));
+        Optional<Customer> validCustomer = getValidCustomer(email, now);
+        if (validCustomer.isPresent()) {
+            Customer customer = validCustomer.get();
+            if (passwordEncoder.matches(password, customer.getPassword())) {
+                return Optional.of(LoginResponseMaker.make(customer));
             }else {
                 attemptRepo.save(new LoginAttempt(email, now));
             }
         }
-
         return Optional.empty();
-    }
-
-    public Optional<LoginResponse> login(String email, String password, LocalDateTime now) {
-        return loginLogic(email, password, now);
     }
 
     public LoginResponse signup(RegisterInfo info) {

@@ -42,6 +42,7 @@ public class EpicureTokenFilter implements Filter, ApplicationContextAware {
 
             } catch (Exception e) {
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
             filterChain.doFilter(httpRequest, httpResponse);
         }

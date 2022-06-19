@@ -3,6 +3,7 @@ package com.moveo.epicure.repo;
 import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.util.QueryUtil;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,5 @@ public interface AttemptRepo extends JpaRepository<LoginAttempt, Integer> {
     Optional<LoginAttempt> findTop1ByMailOrderByTimeDesc(String mail);
 
     @Query(QueryUtil.countByMailAndTimeRange)
-    long countByMailInTime(@Param("mail") String mail, @Param("fromTime") Timestamp fromTime, @Param("toTime") Timestamp toTime);
+    long countByMailInTime(@Param("mail") String mail, @Param("fromTime") LocalDateTime fromTime, @Param("toTime") LocalDateTime toTime);
 }
