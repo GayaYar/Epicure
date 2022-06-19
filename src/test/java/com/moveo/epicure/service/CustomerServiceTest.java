@@ -3,6 +3,7 @@ package com.moveo.epicure.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.moveo.epicure.aws.EmailSender;
 import com.moveo.epicure.dto.CustomerDetail;
 import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
@@ -51,6 +52,8 @@ public class CustomerServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private AttemptRepo attemptRepo;
+    @Mock
+    private EmailSender emailSender;
     private MockCustomer mockCustomer;
     @Captor
     private ArgumentCaptor<Cart> cartArgumentCaptor;
@@ -67,7 +70,7 @@ public class CustomerServiceTest {
      */
     @BeforeEach
     void initialiseTest() {
-        service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder, attemptRepo);
+        service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder, attemptRepo, emailSender);
         mockCustomer = new MockCustomer();
         now = LocalDateTime.now();
     }
