@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
+
     private CustomerService service;
     @Mock
     private CustomerDetail detail;
@@ -63,6 +65,8 @@ public class CustomerServiceTest {
     private ArgumentCaptor<Customer> customerArgumentCaptor;
     @Captor
     private ArgumentCaptor<LoginAttempt> attemptArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
     private LocalDateTime now;
 
     /**
@@ -70,29 +74,37 @@ public class CustomerServiceTest {
      */
     @BeforeEach
     void initialiseTest() {
-        service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder, attemptRepo, emailSender);
+        service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder,
+                attemptRepo, emailSender);
         mockCustomer = new MockCustomer();
         now = LocalDateTime.now();
     }
 
     @Test
     void loginReturnsEmptyWhenEmailDoesNotExist() {
-        Mockito.when(customerRepo.existsByEmail("notexisting@mail.com")).thenReturn(false);
+        Mockito.when(customerRepo.findByEmail("notexisting@mail.com")).thenReturn(Optional.empty());
         assertEquals(service.login("notexisting@mail.com", "a-password", now), Optional.empty());
     }
 
     @Test
-    void loginWhenBlockedThrowsExceptionAndDoesNotSaveAttempt() {
+    void loginWhenBlockedThrowsExceptionAndDoesNotSaveAttemptAndAlertsAdmin() {
         String email = "blocked@mail.com";
         String password = "a-password";
-        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
+        Mockito.when(customerRepo.findByEmail(email)).thenReturn(Optional.of(new Customer()));
         Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
                 .thenReturn(12l);
         try {
             service.login(email, password, now);
-        }catch (Exception e) {
+        } catch (Exception e) {
             assertEquals(e.getClass(), AccountBlockedException.class);
             Mockito.verify(attemptRepo, Mockito.times(0)).save(Mockito.any());
+            Mockito.verify(emailSender, Mockito.times(1))
+                    .messageAdmin(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+            List<String> bothValues = stringArgumentCaptor.getAllValues();
+            assertEquals("Blocked user attempts to login", bothValues.get(0));
+            assertEquals(
+                    "User with email: " + email + " has made more than 10 failed login attempts in the last 30 minutes."
+                    , bothValues.get(1));
         }
     }
 
@@ -100,11 +112,11 @@ public class CustomerServiceTest {
     void loginSuccessful() {
         String email = "mockCus@gmail.com";
         String password = "12345678";
-        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
         Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
                 .thenReturn(2l);
-        Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmail(email)).thenReturn(Optional.of(new Customer(9, "mock cus", email, password)));
+        Mockito.when(passwordEncoder.matches(password, password)).thenReturn(true);
+        Mockito.when(customerRepo.findByEmail(email))
+                .thenReturn(Optional.of(new Customer(9, "mock cus", email, password)));
         assertEquals(service.login(email, password, now), Optional.of(mockCustomer.mockResponse()));
     }
 
@@ -112,17 +124,16 @@ public class CustomerServiceTest {
     void loginFailedReturnsEmptyAndSavesAttempt() {
         String email = "mockCus@gmail.com";
         String password = "12345678";
-        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
         Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
                 .thenReturn(2l);
-        Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmail(email)).thenReturn(Optional.empty());
+        Mockito.when(passwordEncoder.matches(password, password)).thenReturn(false);
+        Mockito.when(customerRepo.findByEmail(email)).thenReturn(Optional.of(new Customer(2, "mock cus", email, password)));
         service.login(email, password, now);
         Mockito.verify(attemptRepo, Mockito.times(1)).save(attemptArgumentCaptor.capture());
         LoginAttempt captorValue = attemptArgumentCaptor.getValue();
         LoginAttempt expected = new LoginAttempt(email, LocalDateTime.now());
         assertTrue(captorValue.getMail().equals(expected.getMail()) &&
-                Duration.between(captorValue.getTime(), expected.getTime()).toMinutes()<1);
+                Duration.between(captorValue.getTime(), expected.getTime()).toMinutes() < 1);
         assertEquals(service.login(email, password, now), Optional.empty());
     }
 
@@ -189,7 +200,9 @@ public class CustomerServiceTest {
     @Test
     void addToCartMealNotFound() {
         Mockito.when(mealRepo.findById(1)).thenReturn(Optional.empty());
-        assertThatThrownBy(()->{service.addToCart(mockCustomer.mockMealDto());}).isInstanceOf(NotFoundException.class)
+        assertThatThrownBy(() -> {
+            service.addToCart(mockCustomer.mockMealDto());
+        }).isInstanceOf(NotFoundException.class)
                 .hasMessage("Could not find the meal you were looking for.");
     }
 
@@ -238,7 +251,8 @@ public class CustomerServiceTest {
     }
 
     /**
-     * verifies that the method deletes all the chosen meals that are linked to the cart (calls the deleteByCart method)
+     * verifies that the method deletes all the chosen meals that are linked to the cart (calls the deleteByCart
+     * method)
      */
     @Test
     void clearCartDeleteMeals() {
@@ -272,11 +286,11 @@ public class CustomerServiceTest {
     void signupSavesUser() {
         Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
         Mockito.when(customerRepo.save(new Customer("mock cus", "mockCus@gmail.com", "12345678")))
-                        .thenReturn(new Customer(6, "mock cus", "mockCus@gmail.com", "12345678"));
+                .thenReturn(new Customer(6, "mock cus", "mockCus@gmail.com", "12345678"));
         service.signup(mockCustomer.mockRegisterInfo());
         Mockito.verify(customerRepo, Mockito.times(1)).save(customerArgumentCaptor.capture());
         assertEquals(customerArgumentCaptor.getValue(),
-                new Customer("mock cus","mockCus@gmail.com", "12345678"));
+                new Customer("mock cus", "mockCus@gmail.com", "12345678"));
     }
 
     /**
@@ -285,7 +299,7 @@ public class CustomerServiceTest {
     @Test
     void signupReturnsLoginResponse() {
         Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
-        Mockito.when(customerRepo.save(new Customer("mock cus","mockCus@gmail.com", "12345678")))
+        Mockito.when(customerRepo.save(new Customer("mock cus", "mockCus@gmail.com", "12345678")))
                 .thenReturn(mockCustomer.mockCustomer());
         assertEquals(service.signup(mockCustomer.mockRegisterInfo()), mockCustomer.mockResponse());
     }
