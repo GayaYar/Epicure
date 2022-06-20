@@ -1,10 +1,9 @@
 package com.moveo.epicure.filter;
 
 
-import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.UserDetail;
 import com.moveo.epicure.util.TokenUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,8 +31,9 @@ public class EpicureTokenFilter implements Filter, ApplicationContextAware {
         } else {
             try{
                 Claims claims = TokenUtil.validateAndGetClaims(httpRequest);
-                CustomerDetail customerDetail = context.getBean(CustomerDetail.class);
-                customerDetail.setId(Integer.parseInt(claims.getSubject()));
+                UserDetail userDetail = context.getBean(UserDetail.class);
+                userDetail.setId(Integer.parseInt(claims.getSubject()));
+                userDetail.setName(claims.get("customerName").toString());
 
             } catch (Exception e) {
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);

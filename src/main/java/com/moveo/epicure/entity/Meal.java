@@ -38,6 +38,7 @@ public class Meal {
     private String img;
     @NotNull
     private String category;
+    private boolean signature;
     @OneToMany(fetch = FetchType.LAZY)
     private List<Choice> choices;
 

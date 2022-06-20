@@ -13,4 +13,7 @@ public class QueryUtil {
 
     public static final String searchByName =
             "SELECT r FROM Restaurant r JOIN r.chef c JOIN r.meals m WHERE r.name=:name or c.name=:name or m.name=:name";
+
+    public static final String countByMailAndTimeRange =
+            "SELECT COUNT(l) FROM LoginAttempt l WHERE l.mail=:mail and l.time>=:fromTime and l.time<:toTime";
 }

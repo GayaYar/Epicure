@@ -2,7 +2,7 @@ package com.moveo.epicure.service;
 
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
-import com.moveo.epicure.dto.CustomerDetail;
+import com.moveo.epicure.dto.UserDetail;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
@@ -12,24 +12,25 @@ import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.MealRepo;
+import com.moveo.epicure.repo.UserRepo;
 import com.moveo.epicure.util.DtoMapper;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerService {
-    @Autowired
-    private CustomerDetail detail;
-    @Autowired
+    private UserDetail detail;
     private CartRepo cartRepo;
-    @Autowired
     private MealRepo mealRepo;
-    @Autowired
     private ChosenMealRepo chosenMealRepo;
-
 
     /**
      * Gets the customer's current cart.
@@ -38,8 +39,8 @@ public class CustomerService {
      */
     private Cart getCurrentCart(boolean withMeals) {
         Integer customerId = detail.getId();
-        Optional<Cart> optionalCart = withMeals ? cartRepo.findByCustomerIdAndCurrentTrue(customerId) :
-                cartRepo.findCurrentWithMeals(customerId);
+        Optional<Cart> optionalCart = withMeals ? cartRepo.findCurrentWithMeals(customerId) :
+                cartRepo.findByCustomerIdAndCurrentTrue(customerId);
         if(optionalCart.isPresent()) {
             return optionalCart.get();
         }
@@ -50,10 +51,11 @@ public class CustomerService {
         return DtoMapper.cartToDto(getCurrentCart(true));
     }
 
-    public CartDTO updateCartComment(String comment) {
+    public String updateCartComment(String comment) {
         Cart currentCart = getCurrentCart(false);
         currentCart.setComment(comment);
-        return DtoMapper.cartToDto(cartRepo.save(currentCart));
+        cartRepo.save(currentCart);
+        return comment;
     }
 
     public void buyCart() {
@@ -93,5 +95,8 @@ public class CustomerService {
         cartRepo.save(currentCart);
     }
 
-    //move limit login to user
+    public List<CartDTO> getHistory() {
+        return cartRepo.findByCustomerIdAndCurrentFalse(detail.getId()).stream().map(DtoMapper::cartToDto).collect(
+                Collectors.toList());
+    }
 }

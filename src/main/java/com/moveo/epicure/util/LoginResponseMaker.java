@@ -16,6 +16,7 @@ public class LoginResponseMaker {
                 .setIssuer("epicure")
                 .setSubject("" + id)
                 .claim("userType", userType)
+                .claim("customerName", name)
                 .setIssuedAt(new Date())
                 .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg".getBytes()))
                 .compact();

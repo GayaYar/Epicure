@@ -4,6 +4,7 @@ import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.service.CustomerService;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart")
-    public ResponseEntity<CartDTO> updateCart(@Valid @RequestBody String cartComment) {
+    public ResponseEntity<String> updateCart(@Valid @RequestBody String cartComment) {
         return ResponseEntity.ok(service.updateCartComment(cartComment));
     }
 
@@ -55,4 +56,8 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/history")
+    public ResponseEntity<List<CartDTO>> getHistory() {
+        return ResponseEntity.ok(service.getHistory());
+    }
 }

@@ -1,6 +1,8 @@
 package com.moveo.epicure.controller;
 
 import com.moveo.epicure.exception.AlreadyExistsException;
+import com.moveo.epicure.exception.ActionIncompleteException;
+import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.LocationNotFoundException;
 import com.moveo.epicure.exception.NoPermitException;
@@ -60,4 +62,14 @@ public class EpicureExceptionHandler {
         return new ErrorDetail(ErrorCode.ALREADY_EXISTS.getCode(), e.getMessage());
     }
 
+    @ExceptionHandler(ActionIncompleteException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDetail handleIncompleteAction(ActionIncompleteException e) {
+        return new ErrorDetail(ErrorCode.ACTION_INCOMPLETE.getCode(), e.getMessage());
+    }
+    @ExceptionHandler(AccountBlockedException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorDetail handleBlockedAccount(AccountBlockedException e) {
+        return new ErrorDetail((ErrorCode.ACCOUNT_BLOCKED.getCode()), e.getMessage());
+    }
 }
