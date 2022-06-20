@@ -3,12 +3,9 @@ package com.moveo.epicure.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.moveo.epicure.dto.CustomerDetail;
-import com.moveo.epicure.dto.LoginInfo;
-import com.moveo.epicure.dto.LoginResponse;
+import com.moveo.epicure.dto.UserDetail;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
-import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.repo.AttemptRepo;
@@ -17,7 +14,6 @@ import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockCustomer;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
-import com.moveo.epicure.repo.CustomerRepo;
 import com.moveo.epicure.repo.MealRepo;
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -38,7 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class CustomerServiceTest {
     private CustomerService service;
     @Mock
-    private CustomerDetail detail;
+    private UserDetail detail;
     @Mock
     private CustomerRepo customerRepo;
     @Mock

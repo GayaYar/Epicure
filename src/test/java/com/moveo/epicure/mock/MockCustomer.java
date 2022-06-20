@@ -2,15 +2,12 @@ package com.moveo.epicure.mock;
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.ChoiceDTO;
-import com.moveo.epicure.dto.LoginInfo;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.OptionDTO;
-import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.Choice;
 import com.moveo.epicure.entity.ChosenMeal;
-import com.moveo.epicure.entity.Customer;
 import com.moveo.epicure.entity.Label;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Option;
@@ -19,8 +16,6 @@ import io.jsonwebtoken.security.Keys;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 public class MockCustomer {
     private Cart currentCart;
@@ -132,10 +127,6 @@ public class MockCustomer {
                 .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg ".getBytes()))
                 .compact();
         return new LoginResponse("mock cus", jwts);
-    }
-
-    public RegisterInfo mockRegisterInfo() {
-        return new RegisterInfo(new LoginInfo("mockCus@gmail.com", "12345678"), "mock cus");
     }
 
     public List<Cart> mockHistory() {

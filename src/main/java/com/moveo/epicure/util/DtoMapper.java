@@ -2,6 +2,7 @@ package com.moveo.epicure.util;
 
 import static java.util.stream.Collectors.groupingBy;
 
+import com.moveo.epicure.dto.AdminRestaurantDto;
 import com.moveo.epicure.dto.CartDTO;
 import com.moveo.epicure.dto.CartMealDTO;
 import com.moveo.epicure.dto.ChefBriefDTO;
@@ -123,5 +124,11 @@ public class DtoMapper {
 
     public static ChefBriefDTO chefToBrief(Chef chef) {
         return new ChefBriefDTO(chef.getId(), chef.getName(), chef.getImg());
+    }
+
+    public static AdminRestaurantDto restaurantToAdminRestaurant(Restaurant restaurant) {
+        return new AdminRestaurantDto(restaurant.getId(), restaurant.getName(), restaurant.getRating(),
+                restaurant.getImg(), restaurant.isOpen(), restaurant.getPopularity(), restaurant.getLatitude(),
+                restaurant.getLongitude(), restaurant.getPrice());
     }
 }

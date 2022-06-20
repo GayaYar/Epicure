@@ -1,10 +1,14 @@
 package com.moveo.epicure.controller;
+
+import com.moveo.epicure.exception.AlreadyExistsException;
 import com.moveo.epicure.exception.ActionIncompleteException;
 import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.exception.LocationNotFoundException;
+import com.moveo.epicure.exception.NoPermitException;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.exception.NullException;
+import com.moveo.epicure.exception.ProcessException;
 import com.moveo.epicure.exception.model.ErrorCode;
 import com.moveo.epicure.exception.model.ErrorDetail;
 import org.springframework.http.HttpStatus;
@@ -39,6 +43,25 @@ public class EpicureExceptionHandler {
     public ErrorDetail handleNull(NullException e) {
         return new ErrorDetail(ErrorCode.NULL_EXCEPTION.getCode(), e.getMessage());
     }
+
+    @ExceptionHandler(ProcessException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDetail handleProcess(ProcessException e) {
+        return new ErrorDetail(ErrorCode.PROCESS.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(NoPermitException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDetail handleNoPermit(NoPermitException e) {
+        return new ErrorDetail(ErrorCode.NO_PERMIT.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDetail handleAlreadyExists(AlreadyExistsException e) {
+        return new ErrorDetail(ErrorCode.ALREADY_EXISTS.getCode(), e.getMessage());
+    }
+
     @ExceptionHandler(ActionIncompleteException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDetail handleIncompleteAction(ActionIncompleteException e) {

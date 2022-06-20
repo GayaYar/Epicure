@@ -1,23 +1,28 @@
 package com.moveo.epicure.controller;
 
+import com.moveo.epicure.annotation.PermissionNeeded;
+import com.moveo.epicure.dto.AdminRestaurantDto;
 import com.moveo.epicure.dto.MealDTO;
 import com.moveo.epicure.dto.RestaurantDTO;
 import com.moveo.epicure.dto.RestaurantBriefDTO;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.service.RestaurantService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -84,6 +89,15 @@ public class RestaurantController {
             throw new NotFoundException("meal");
         }
         return ResponseEntity.ok(optionalMeal.get());
+    }
+
+    @PermissionNeeded
+    @PutMapping(value = "/add")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+//                    required = true, dataType = "string", paramType = "header") })
+    public ResponseEntity<AdminRestaurantDto> addRestaurant(@Valid @RequestBody AdminRestaurantDto restaurant) {
+        return ResponseEntity.ok(service.addRestaurant(restaurant));
     }
 
 }
