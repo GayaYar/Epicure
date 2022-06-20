@@ -11,6 +11,8 @@ import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.Label;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.entity.Option;
+import com.moveo.epicure.entity.User;
+import com.moveo.epicure.entity.UserType;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class MockCustomer {
         cartMeals.add(new CartMealDTO(7, "img", 2.5, optionDTOS, 2, 5));
         cartMeals.add(new CartMealDTO(8, "img", 2.5, optionDTOS, 2, 5));
 
-        return new CartDTO("cusName", cartMeals, "yes", 58.9);
+        return new CartDTO(cartMeals, "yes", 58.9);
     }
 
     public MealDTO mockMealDto() {
@@ -76,11 +78,11 @@ public class MockCustomer {
     }
 
     public Cart noMealsCart() {
-        return new Cart(3, true, "yes", 58.9, new Customer(3, "cusName"), null);
+        return new Cart(3, true, "yes", 58.9, new User(3), null);
     }
 
     private Cart mockCart() {
-        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName"), null);
+        Cart cart = new Cart(5, true, "yes", 58.9, new User(3), null);
         Meal meal = mockMeal();
         List<Option> option = new ArrayList<>(1);
         option.add(new Option(1, "avocado"));
@@ -106,16 +108,16 @@ public class MockCustomer {
     }
 
     public CartDTO emptyCartDto() {
-        return new CartDTO("cusName", new ArrayList<>(), "", 0);
+        return new CartDTO(new ArrayList<>(), "", 0);
     }
 
     public Cart emptyCart() {
-        return new Cart(null, true, "", 0, new Customer(5, "cusName")
+        return new Cart(null, true, "", 0, new User(5)
                 , new ArrayList<>());
     }
 
-    public Customer mockCustomer() {
-        return new Customer(9, "mock cus", "mockCus@gmail.com", "12345678");
+    public User mockCustomer() {
+        return new User(9, "mock cus", "mockCus@gmail.com", "12345678", UserType.CUSTOMER);
     }
 
     public LoginResponse mockResponse() {
@@ -132,7 +134,7 @@ public class MockCustomer {
     public List<Cart> mockHistory() {
         List<Cart> history = new ArrayList<>(2);
 
-        Customer customer = new Customer(3, "cusName");
+        User customer = new User(3);
         Cart cart = new Cart(5, false, "yes", 58.9, customer, null);
         List<Choice> mealChoices = new ArrayList<>(1);
         List<Option> option = new ArrayList<>(1);
@@ -160,9 +162,9 @@ public class MockCustomer {
         List<CartMealDTO> cartMealDTOS = new ArrayList<>(2);
         cartMealDTOS.add(new CartMealDTO(7, "img", 2.5, optionDTOS, 2, 5));
         cartMealDTOS.add(new CartMealDTO(8, "img", 2.5, optionDTOS, 2, 5));
-        history.add(new CartDTO("cusName", cartMealDTOS, "yes", 58.9));
+        history.add(new CartDTO(cartMealDTOS, "yes", 58.9));
 
-        history.add(new CartDTO("cusName", new ArrayList<>(), "message", 6.5));
+        history.add(new CartDTO(new ArrayList<>(), "message", 6.5));
 
         return history;
     }

@@ -1,6 +1,7 @@
 package com.moveo.epicure.controller;
 
 import com.moveo.epicure.dto.LoginResponse;
+import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.exception.IncorrectLoginException;
 import com.moveo.epicure.service.UserService;
 import java.util.Optional;
@@ -37,8 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponse> signup(@RequestParam @Pattern(regexp = "^(.+)@(\\S+)$", message = "invalid email address")
-    String email, @RequestParam @Size(min = 4) String password, @RequestParam String name) {
-        return ResponseEntity.ok(service.signup(email, password, name));
+    public ResponseEntity<LoginResponse> signup(@Valid @RequestBody RegisterInfo info) {
+        return ResponseEntity.ok(service.signup(info));
     }
 }

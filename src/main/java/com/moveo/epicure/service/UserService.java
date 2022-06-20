@@ -34,6 +34,10 @@ public class UserService {
         return loginLogic(email, password, now);
     }
 
+    public Optional<LoginResponse> login(String email, String password) {
+        return loginLogic(email, password, LocalDateTime.now());
+    }
+
     private Optional<LoginResponse> loginLogic(String email, String password, LocalDateTime now) {
         Optional<User> validUser = getValidUser(email, now);
         if (validUser.isPresent()) {

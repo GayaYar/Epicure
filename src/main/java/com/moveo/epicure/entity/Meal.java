@@ -45,4 +45,20 @@ public class Meal {
     public Meal(Integer id) {
         this.id = id;
     }
+
+    public Meal(Integer id, String name, String description, boolean spicy, boolean vegan, boolean glutenFree,
+            double price,
+            String img, String category, List<Choice> choices) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.spicy = spicy;
+        this.vegan = vegan;
+        this.glutenFree = glutenFree;
+        this.price = price;
+        this.img = img;
+        this.category = category;
+        this.signature = false;
+        this.choices = choices;
+    }
 }

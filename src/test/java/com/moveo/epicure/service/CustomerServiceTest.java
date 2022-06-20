@@ -73,7 +73,6 @@ public class CustomerServiceTest {
     @Test
     void getCartNotFound() {
         Mockito.when(detail.getId()).thenReturn(5);
-        Mockito.when(detail.getName()).thenReturn("cusName");
         Mockito.when(cartRepo.findCurrentWithMeals(5)).thenReturn(Optional.empty());
         Mockito.when(cartRepo.save(new Cart(true, new User(5)))).thenReturn(mockCustomer.emptyCart());
         service.getCart();
