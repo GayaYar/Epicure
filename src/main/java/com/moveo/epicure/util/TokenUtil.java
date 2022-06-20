@@ -14,7 +14,7 @@ public class TokenUtil {
      */
     public static Claims validateAndGetClaims(HttpServletRequest httpRequest) throws Exception{
         String token = httpRequest.getHeader("Authorization");
-        if(token.startsWith("bearer:")) {
+        if(token.startsWith("bearer")) {
             token = token.substring(7);
         }
         return Jwts.parserBuilder()
