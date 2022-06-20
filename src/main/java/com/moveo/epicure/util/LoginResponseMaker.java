@@ -6,11 +6,15 @@ import com.moveo.epicure.entity.UserType;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LoginResponseMaker {
+    @Value("${secret.token.key}")
+    private String key;
 
-    public static LoginResponse make(Integer id, String name, UserType userType) {
-        NullUtil.validate(id);
+    public LoginResponse make(Integer id, String name, UserType userType) {
         name = name == null ? "" : name;
         String jwts = Jwts.builder()
                 .setIssuer("epicure")
@@ -18,12 +22,12 @@ public class LoginResponseMaker {
                 .claim("userType", userType)
                 .claim("customerName", name)
                 .setIssuedAt(new Date())
-                .signWith(Keys.hmacShaKeyFor("sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg".getBytes()))
+                .signWith(Keys.hmacShaKeyFor(key.getBytes()))
                 .compact();
         return new LoginResponse(name, jwts);
     }
 
-    public static LoginResponse make(User user) {
+    public LoginResponse make(User user) {
         return make(user.getId(), user.getName(), user.getUserType());
     }
 }

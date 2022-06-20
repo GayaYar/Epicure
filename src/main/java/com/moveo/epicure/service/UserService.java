@@ -10,7 +10,6 @@ import com.moveo.epicure.exception.AlreadyExistsException;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.UserRepo;
 import com.moveo.epicure.util.LoginResponseMaker;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,13 +20,15 @@ public class UserService {
     private UserRepo repo;
     private PasswordEncoder passwordEncoder;
     private AttemptRepo attemptRepo;
+    private LoginResponseMaker loginResponseMaker;
     private static final long ALLOWED_ATTEMPTS = 10;
     private static final int ATTEMPT_MINUTES = 30;
 
-    public UserService(UserRepo repo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo) {
+    public UserService(UserRepo repo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo, LoginResponseMaker loginResponseMaker) {
         this.repo = repo;
         this.passwordEncoder = passwordEncoder;
         this.attemptRepo = attemptRepo;
+        this.loginResponseMaker = loginResponseMaker;
     }
 
     public Optional<LoginResponse> login(String email, String password, LocalDateTime now) {
@@ -43,7 +44,7 @@ public class UserService {
         if (validUser.isPresent()) {
             User user = validUser.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return Optional.of(LoginResponseMaker.make(user));
+                return Optional.of(loginResponseMaker.make(user));
             }else {
                 attemptRepo.save(new LoginAttempt(email, now));
             }
@@ -69,7 +70,7 @@ public class UserService {
             throw new AlreadyExistsException("email");
         }
         User user = repo.save(new User(info.getName(), email, passwordEncoder.encode(info.getPassword()), UserType.CUSTOMER));
-        return LoginResponseMaker.make(user);
+        return loginResponseMaker.make(user);
     }
 
     public void saveAdmin(String email, String password, String name) {

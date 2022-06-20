@@ -30,7 +30,7 @@ public class EpicureTokenFilter implements Filter, ApplicationContextAware {
             filterChain.doFilter(httpRequest, httpResponse);
         } else {
             try{
-                Claims claims = TokenUtil.validateAndGetClaims(httpRequest);
+                Claims claims = context.getBean(TokenUtil.class).validateAndGetClaims(httpRequest);
                 UserDetail userDetail = context.getBean(UserDetail.class);
                 userDetail.setId(Integer.parseInt(claims.getSubject()));
                 userDetail.setName(claims.get("customerName").toString());

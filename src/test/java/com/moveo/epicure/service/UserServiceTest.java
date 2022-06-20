@@ -11,6 +11,7 @@ import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockUser;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.UserRepo;
+import com.moveo.epicure.util.LoginResponseMaker;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,35 +32,17 @@ public class UserServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private AttemptRepo attemptRepo;
+    @Mock
+    private LoginResponseMaker loginResponseMaker;
     @Captor
     private ArgumentCaptor<User> userArgumentCaptor;
     private LocalDateTime now;
 
     @BeforeEach
     void initialiseTest() {
-        service = new UserService(userRepo, passwordEncoder, attemptRepo);
+        service = new UserService(userRepo, passwordEncoder, attemptRepo, loginResponseMaker);
         now = LocalDateTime.now();
     }
-
-    //add login tests from ses branch
-
-    /*
-    public LoginResponse signup(RegisterInfo info) {
-        String email = info.getEmail();
-        if (repo.existsByEmail(email)) {
-            throw new AlreadyExistsException("email");
-        }
-        User user = repo.save(new User(info.getName(), email, passwordEncoder.encode(info.getPassword())));
-        return LoginResponseMaker.make(user);
-    }
-
-    public void saveAdmin(String email, String password, String name) {
-        if (repo.existsByEmail(email)) {
-            throw new AlreadyExistsException("email");
-        }
-        repo.save(new User(name, email, passwordEncoder.encode(password), UserType.ADMIN));
-    }
-     */
 
     @Test
     void signUpThrowsExceptionWhenEmailExists() {
@@ -76,6 +59,8 @@ public class UserServiceTest {
         Mockito.when(passwordEncoder.encode(info.getPassword())).thenReturn(info.getPassword());
         Mockito.when(userRepo.save(new User(info.getName(), info.getEmail(), info.getPassword(), UserType.CUSTOMER)))
                 .thenReturn(new User(5, info.getName(), info.getEmail(), info.getPassword(), UserType.CUSTOMER));
+        Mockito.when(loginResponseMaker.make(new User(5, info.getName(), info.getEmail(), info.getPassword(), UserType.CUSTOMER)))
+                        .thenReturn(MockUser.getMockResponse());
         service.signup(info);
         Mockito.verify(userRepo, Mockito.times(1)).save(userArgumentCaptor.capture());
         assertEquals(new User(info.getName(), info.getEmail(), info.getPassword(), UserType.CUSTOMER), userArgumentCaptor.getValue());

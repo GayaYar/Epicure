@@ -1,0 +1,6 @@
+secret:
+  db:
+    username: postgres
+    password: pirsumgres
+  token:
+    key: sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg

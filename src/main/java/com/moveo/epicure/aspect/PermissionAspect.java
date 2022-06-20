@@ -20,9 +20,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class PermissionAspect {
 
     private PermitRepo repo;
+    private TokenUtil tokenUtil;
 
-    public PermissionAspect(PermitRepo repo) {
+    public PermissionAspect(PermitRepo repo, TokenUtil tokenUtil) {
         this.repo = repo;
+        this.tokenUtil = tokenUtil;
     }
 
     /**
@@ -41,7 +43,7 @@ public class PermissionAspect {
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         boolean permitted = false;
         try {
-            Claims claims = TokenUtil.validateAndGetClaims(httpRequest);
+            Claims claims = tokenUtil.validateAndGetClaims(httpRequest);
             String userType = claims.get("userType").toString();
             String methodName = joinPoint.getSignature().getName();
             List<String> permissionList = repo.findById(userType).get().getPermissionList();
