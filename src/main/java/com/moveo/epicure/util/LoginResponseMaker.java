@@ -2,13 +2,14 @@ package com.moveo.epicure.util;
 
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.entity.User;
+import com.moveo.epicure.entity.UserType;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 
 public class LoginResponseMaker {
 
-    public static LoginResponse make(Integer id, String name, String userType) {
+    public static LoginResponse make(Integer id, String name, UserType userType) {
         NullUtil.validate(id);
         name = name == null ? "" : name;
         String jwts = Jwts.builder()

@@ -2,6 +2,7 @@ package com.moveo.epicure.service;
 
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.entity.User;
+import com.moveo.epicure.entity.UserType;
 import com.moveo.epicure.exception.AlreadyExistsException;
 import com.moveo.epicure.repo.UserRepo;
 import com.moveo.epicure.util.LoginResponseMaker;
@@ -40,6 +41,6 @@ public class UserService {
         if (repo.existsByEmail(email)) {
             throw new AlreadyExistsException("email");
         }
-        repo.save(new User(name, email, passwordEncoder.encode(password), "ADMIN"));
+        repo.save(new User(name, email, passwordEncoder.encode(password), UserType.ADMIN));
     }
 }

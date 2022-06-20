@@ -20,11 +20,11 @@ import lombok.NoArgsConstructor;
 public class Permit {
     @Id
     @NotNull
-    private String userType;
+    private UserType userType;
     @NotNull
     private String permissions;
 
-    public Permit(String userType, List<String> permissionList) {
+    public Permit(UserType userType, List<String> permissionList) {
         this.userType = userType;
         setPermissionList(permissionList);
     }

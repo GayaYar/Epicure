@@ -1,6 +1,7 @@
 package com.moveo.epicure;
 
 import com.moveo.epicure.entity.Permit;
+import com.moveo.epicure.entity.UserType;
 import com.moveo.epicure.repo.PermitRepo;
 import com.moveo.epicure.service.UserService;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class EpicureApplication {
 	private static void seed(ConfigurableApplicationContext context) {
 		PermitRepo permitRepo = context.getBean(PermitRepo.class);
 		if(permitRepo.findAll().isEmpty()) {
-			permitRepo.save(new Permit("ADMIN", Arrays.asList("addRestaurant")));
+			permitRepo.save(new Permit(UserType.ADMIN, Arrays.asList("addRestaurant")));
 		}
 
 		//saving admin for test

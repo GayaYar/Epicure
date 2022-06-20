@@ -1,6 +1,5 @@
 package com.moveo.epicure.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,13 +29,14 @@ public class User {
     @NotNull
     @Size(min = 4)
     private String password;
-    private String userType;
+    @Enumerated(value = EnumType.STRING)
+    private UserType userType;
 
     public User(Integer id) {
         this.id = id;
     }
 
-    public User(String name, String email, String password, String userType) {
+    public User(String name, String email, String password, UserType userType) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -50,19 +50,19 @@ public class User {
         defaultType();
     }
 
-    public String getUserType() {
+    public UserType getUserType() {
         defaultType();
         return userType;
     }
 
-    public void setUserType(String userType) {
+    public void setUserType(UserType userType) {
         this.userType = userType;
         defaultType();
     }
 
     private void defaultType() {
         if(userType==null) {
-            userType = "CUSTOMER";
+            userType = UserType.CUSTOMER;
         }
     }
 }
