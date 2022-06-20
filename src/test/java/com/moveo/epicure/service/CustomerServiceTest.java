@@ -7,6 +7,7 @@ import com.moveo.epicure.dto.UserDetail;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
 import com.moveo.epicure.entity.LoginAttempt;
+import com.moveo.epicure.entity.User;
 import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.entity.Meal;
@@ -36,88 +37,24 @@ public class CustomerServiceTest {
     @Mock
     private UserDetail detail;
     @Mock
-    private CustomerRepo customerRepo;
-    @Mock
     private CartRepo cartRepo;
     @Mock
     private MealRepo mealRepo;
     @Mock
     private ChosenMealRepo chosenMealRepo;
-    @Mock
-    private PasswordEncoder passwordEncoder;
-    @Mock
-    private AttemptRepo attemptRepo;
     private MockCustomer mockCustomer;
     @Captor
     private ArgumentCaptor<Cart> cartArgumentCaptor;
     @Captor
     private ArgumentCaptor<ChosenMeal> chosenMealArgumentCaptor;
-    @Captor
-    private ArgumentCaptor<Customer> customerArgumentCaptor;
-    @Captor
-    private ArgumentCaptor<LoginAttempt> attemptArgumentCaptor;
-    private LocalDateTime now;
 
     /**
      * instantiates the necessary fields for the tests
      */
     @BeforeEach
     void initialiseTest() {
-        service = new CustomerService(detail, customerRepo, cartRepo, mealRepo, chosenMealRepo, passwordEncoder, attemptRepo);
+        service = new CustomerService(detail, cartRepo, mealRepo, chosenMealRepo);
         mockCustomer = new MockCustomer();
-        now = LocalDateTime.now();
-    }
-
-    @Test
-    void loginReturnsEmptyWhenEmailDoesNotExist() {
-        Mockito.when(customerRepo.existsByEmail("notexisting@mail.com")).thenReturn(false);
-        assertEquals(service.login("notexisting@mail.com", "a-password", now), Optional.empty());
-    }
-
-    @Test
-    void loginWhenBlockedThrowsExceptionAndDoesNotSaveAttempt() {
-        String email = "blocked@mail.com";
-        String password = "a-password";
-        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
-                .thenReturn(12l);
-        try {
-            service.login(email, password, now);
-        }catch (Exception e) {
-            assertEquals(e.getClass(), AccountBlockedException.class);
-            Mockito.verify(attemptRepo, Mockito.times(0)).save(Mockito.any());
-        }
-    }
-
-    @Test
-    void loginSuccessful() {
-        String email = "mockCus@gmail.com";
-        String password = "12345678";
-        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
-                .thenReturn(2l);
-        Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.of(new Customer(9, "mock cus", email, password)));
-        assertEquals(service.login(email, password, now), Optional.of(mockCustomer.mockResponse()));
-    }
-
-    @Test
-    void loginFailedReturnsEmptyAndSavesAttempt() {
-        String email = "mockCus@gmail.com";
-        String password = "12345678";
-        LoginInfo info = new LoginInfo(email, password);
-        Mockito.when(customerRepo.existsByEmail(email)).thenReturn(true);
-        Mockito.when(attemptRepo.countByMailInTime(email, Timestamp.valueOf(now.minusMinutes(30)), Timestamp.valueOf(now)))
-                .thenReturn(2l);
-        Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
-        Mockito.when(customerRepo.findByEmailAndPassword(email, password)).thenReturn(Optional.empty());
-        service.login(email, password, now);
-        Mockito.verify(attemptRepo, Mockito.times(1)).save(attemptArgumentCaptor.capture());
-        LoginAttempt captorValue = attemptArgumentCaptor.getValue();
-        LoginAttempt expected = new LoginAttempt(email, LocalDateTime.now());
-        assertTrue(captorValue.getMail().equals(expected.getMail()) &&
-                Duration.between(captorValue.getTime(), expected.getTime()).toMinutes()<1);
-        assertEquals(service.login(email, password, now), Optional.empty());
     }
 
     /**
@@ -138,7 +75,7 @@ public class CustomerServiceTest {
         Mockito.when(detail.getId()).thenReturn(5);
         Mockito.when(detail.getName()).thenReturn("cusName");
         Mockito.when(cartRepo.findCurrentWithMeals(5)).thenReturn(Optional.empty());
-        Mockito.when(cartRepo.save(new Cart(true, new Customer(5, "cusName")))).thenReturn(mockCustomer.emptyCart());
+        Mockito.when(cartRepo.save(new Cart(true, new User(5)))).thenReturn(mockCustomer.emptyCart());
         service.getCart();
         Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
         assertEquals(cartArgumentCaptor.getValue(), mockCustomer.emptyCart());
@@ -150,9 +87,9 @@ public class CustomerServiceTest {
      */
     @Test
     void updateCartComment() {
-        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
+        Cart cart = new Cart(5, true, "yes", 58.9, new User(3)
                 , null);
-        Cart difCart = new Cart(5, true, "different", 58.9, new Customer(3, "cusName")
+        Cart difCart = new Cart(5, true, "different", 58.9, new User(3)
                 , null);
         Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(cart));
         Mockito.when(detail.getId()).thenReturn(3);
@@ -166,9 +103,9 @@ public class CustomerServiceTest {
      */
     @Test
     void buyCart() {
-        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
+        Cart cart = new Cart(5, true, "yes", 58.9, new User(3)
                 , null);
-        Cart notCurrentCart = new Cart(5, false, "yes", 58.9, new Customer(3, "cusName")
+        Cart notCurrentCart = new Cart(5, false, "yes", 58.9, new User(3)
                 , null);
         Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(cart));
         Mockito.when(detail.getId()).thenReturn(3);
@@ -236,7 +173,7 @@ public class CustomerServiceTest {
      */
     @Test
     void clearCartDeleteMeals() {
-        Cart cart = new Cart(5, true, "yes", 58.9, new Customer(3, "cusName")
+        Cart cart = new Cart(5, true, "yes", 58.9, new User(3)
                 , null);
         Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of(cart));
         Mockito.when(detail.getId()).thenReturn(3);
@@ -250,38 +187,13 @@ public class CustomerServiceTest {
      */
     @Test
     void clearCart() {
-        Customer customer = new Customer(3, "cusName");
+        User customer = new User(3);
         Mockito.when(cartRepo.findByCustomerIdAndCurrentTrue(3)).thenReturn(Optional.of
                 (new Cart(5, true, "yes", 58.9, customer, null)));
         Mockito.when(detail.getId()).thenReturn(3);
         service.clearCart();
         Mockito.verify(cartRepo, Mockito.times(1)).save(cartArgumentCaptor.capture());
         assertEquals(cartArgumentCaptor.getValue(), new Cart(5, true, "", 0, customer, new ArrayList<>()));
-    }
-
-    /**
-     * verifies the new user is saved with all relevant fields
-     */
-    @Test
-    void signupSavesUser() {
-        Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
-        Mockito.when(customerRepo.save(new Customer("mock cus", "mockCus@gmail.com", "12345678")))
-                        .thenReturn(new Customer(6, "mock cus", "mockCus@gmail.com", "12345678"));
-        service.signup(mockCustomer.mockRegisterInfo());
-        Mockito.verify(customerRepo, Mockito.times(1)).save(customerArgumentCaptor.capture());
-        assertEquals(customerArgumentCaptor.getValue(),
-                new Customer("mock cus","mockCus@gmail.com", "12345678"));
-    }
-
-    /**
-     * assures that the method returns a login response
-     */
-    @Test
-    void signupReturnsLoginResponse() {
-        Mockito.when(passwordEncoder.encode("12345678")).thenReturn("12345678");
-        Mockito.when(customerRepo.save(new Customer("mock cus","mockCus@gmail.com", "12345678")))
-                .thenReturn(mockCustomer.mockCustomer());
-        assertEquals(service.signup(mockCustomer.mockRegisterInfo()), mockCustomer.mockResponse());
     }
 
     /**

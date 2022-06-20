@@ -64,7 +64,7 @@ public class UserService {
         if (repo.existsByEmail(email)) {
             throw new AlreadyExistsException("email");
         }
-        User user = repo.save(new User(info.getName(), email, passwordEncoder.encode(info.getPassword())));
+        User user = repo.save(new User(info.getName(), email, passwordEncoder.encode(info.getPassword()), UserType.CUSTOMER));
         return LoginResponseMaker.make(user);
     }
 

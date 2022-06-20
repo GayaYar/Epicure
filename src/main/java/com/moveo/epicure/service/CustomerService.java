@@ -12,7 +12,6 @@ import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.MealRepo;
-import com.moveo.epicure.repo.UserRepo;
 import com.moveo.epicure.util.DtoMapper;
 import java.util.Optional;
 import java.util.List;

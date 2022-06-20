@@ -10,8 +10,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class CartDTO {
     @NotNull
-    private String customerName;
-    @NotNull
     private List<CartMealDTO> meals;
     @NotNull
     private String comment;
