@@ -84,6 +84,6 @@ public class UserServiceTest {
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
         service.saveAdmin(email, password, name);
         Mockito.verify(userRepo, Mockito.times(1)).save(userArgumentCaptor.capture());
-        assertEquals(userArgumentCaptor.getValue(), new User(name, email, password));
+        assertEquals(userArgumentCaptor.getValue(), new User(name, email, password, UserType.ADMIN));
     }
 }

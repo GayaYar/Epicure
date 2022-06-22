@@ -80,7 +80,7 @@ public class RestaurantControllerTest {
     void getMealFound() {
         Optional<MealDTO> mockOptional = Optional.of(mockRestaurant.meal1asDto());
         Mockito.when(service.findMeal(1)).thenReturn(mockOptional);
-        assertEquals(controller.findById(1), mockOptional.get());
+        assertEquals(controller.getMeal(1), ResponseEntity.ok(mockOptional.get()));
     }
 
     /**
