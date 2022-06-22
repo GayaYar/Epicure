@@ -14,7 +14,7 @@ public class EpicureApplication {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(EpicureApplication.class, args);
-		seed(context);
+		//seed(context);
 	}
 
 	private static void seed(ConfigurableApplicationContext context) {
