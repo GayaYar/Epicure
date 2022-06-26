@@ -4,3 +4,6 @@ secret:
     password: pirsumgres
   token:
     key: sdhfhsdfggusdfkuygsdufggfbgvtsdgfurfbocvajnrgaiuetjrbg
+  aws:
+    accessKey: AKIA36ODUCGAKR6Z33S5
+    secretKey: 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
