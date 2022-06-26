@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  api:
+    image: 'epicure:latest'
+    build:
+      context: .
+    ports:
+      - "3000:8080"
+    container_name: api
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL="${DB_URL}"
+      - SPRING_DATASOURCE_USERNAME="${DB_USERNAME}"
+      - SPRING_DATASOURCE_PASSWORD="${DB_PASSWORD}"
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: 'postgres:latest'
+    ports:
+      - "5432:5432"
+    container_name: db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER="${DB_USERNAME}"
+      - POSTGRES_PASSWORD="${DB_PASSWORD}"
