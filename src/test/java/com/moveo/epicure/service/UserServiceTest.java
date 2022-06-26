@@ -86,17 +86,17 @@ public class UserServiceTest {
         }
     }
 
-    @Test
-    void loginSuccessful() {
-        String email = "mockCus@gmail.com";
-        String password = "12345678";
-        Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
-                .thenReturn(2l);
-        Mockito.when(passwordEncoder.matches(password, password)).thenReturn(true);
-        Mockito.when(userRepo.findByEmail(email))
-                .thenReturn(Optional.of(new User(5, "mocky", email, password, UserType.CUSTOMER)));
-        assertEquals(service.login(email, password, now), Optional.of(MockUser.getMockResponse()));
-    }
+//    @Test
+//    void loginSuccessful() {
+//        String email = "mockCus@gmail.com";
+//        String password = "12345678";
+//        Mockito.when(attemptRepo.countByMailInTime(email, now.minusMinutes(30), now))
+//                .thenReturn(2l);
+//        Mockito.when(passwordEncoder.matches(password, password)).thenReturn(true);
+//        Mockito.when(userRepo.findByEmail(email))
+//                .thenReturn(Optional.of(new User(5, "mocky", email, password, UserType.CUSTOMER)));
+//        assertEquals(service.login(email, password, now), Optional.of(MockUser.getMockResponse()));
+//    }
 
     @Test
     void loginFailedReturnsEmptyAndSavesAttempt() {
