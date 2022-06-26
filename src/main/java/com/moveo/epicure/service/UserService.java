@@ -1,5 +1,6 @@
 package com.moveo.epicure.service;
 
+import com.moveo.epicure.aws.EmailSender;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.LoginAttempt;
@@ -21,14 +22,17 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     private AttemptRepo attemptRepo;
     private LoginResponseMaker loginResponseMaker;
+    private EmailSender emailSender;
     private static final long ALLOWED_ATTEMPTS = 10;
     private static final int ATTEMPT_MINUTES = 30;
 
-    public UserService(UserRepo repo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo, LoginResponseMaker loginResponseMaker) {
+    public UserService(UserRepo repo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo,
+            LoginResponseMaker loginResponseMaker, EmailSender emailSender) {
         this.repo = repo;
         this.passwordEncoder = passwordEncoder;
         this.attemptRepo = attemptRepo;
         this.loginResponseMaker = loginResponseMaker;
+        this.emailSender = emailSender;
     }
 
     public Optional<LoginResponse> login(String email, String password, LocalDateTime now) {
@@ -57,6 +61,8 @@ public class UserService {
         if (optionalUser.isPresent()) {
             long attemptCount = attemptRepo.countByMailInTime(email, now.minusMinutes(ATTEMPT_MINUTES), now);
             if (attemptCount >= ALLOWED_ATTEMPTS) {
+                emailSender.messageAdmin("Blocked user attempts to login", "User with email: "+email
+                        +" has made more than "+ALLOWED_ATTEMPTS+" failed login attempts in the last "+ATTEMPT_MINUTES+" minutes.");
                 throw new AccountBlockedException();
             } else {
                 return optionalUser;
@@ -64,6 +70,7 @@ public class UserService {
         }
         return Optional.empty();
     }
+
     public LoginResponse signup(RegisterInfo info) {
         String email = info.getEmail();
         if (repo.existsByEmail(email)) {

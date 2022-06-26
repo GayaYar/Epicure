@@ -2,23 +2,16 @@ package com.moveo.epicure.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-
 import com.moveo.epicure.dto.UserDetail;
 import com.moveo.epicure.entity.Cart;
 import com.moveo.epicure.entity.ChosenMeal;
-import com.moveo.epicure.entity.LoginAttempt;
 import com.moveo.epicure.entity.User;
-import com.moveo.epicure.exception.AccountBlockedException;
-import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.entity.Meal;
 import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockCustomer;
 import com.moveo.epicure.repo.CartRepo;
 import com.moveo.epicure.repo.ChosenMealRepo;
 import com.moveo.epicure.repo.MealRepo;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,10 +22,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
+
     private CustomerService service;
     @Mock
     private UserDetail detail;
@@ -119,7 +112,9 @@ public class CustomerServiceTest {
     @Test
     void addToCartMealNotFound() {
         Mockito.when(mealRepo.findById(1)).thenReturn(Optional.empty());
-        assertThatThrownBy(()->{service.addToCart(mockCustomer.mockMealDto());}).isInstanceOf(NotFoundException.class)
+        assertThatThrownBy(() -> {
+            service.addToCart(mockCustomer.mockMealDto());
+        }).isInstanceOf(NotFoundException.class)
                 .hasMessage("Could not find the meal you were looking for.");
     }
 
@@ -168,7 +163,8 @@ public class CustomerServiceTest {
     }
 
     /**
-     * verifies that the method deletes all the chosen meals that are linked to the cart (calls the deleteByCart method)
+     * verifies that the method deletes all the chosen meals that are linked to the cart (calls the deleteByCart
+     * method)
      */
     @Test
     void clearCartDeleteMeals() {
