@@ -1,5 +1,0 @@
-Host epicure
-  HostName 54.167.232.24
-  User postgres
-  IdentityFile ~/Documents/moveoPrograms/aws/epicureKeyPair.pem
-  IdentitiesOnly yes
