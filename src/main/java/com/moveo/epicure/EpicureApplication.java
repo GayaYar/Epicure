@@ -8,6 +8,8 @@ import java.util.Arrays;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class EpicureApplication {
@@ -28,6 +30,12 @@ public class EpicureApplication {
 //		if(userService.login("admin1@mail.com", "test-admin").isEmpty()) {
 //			userService.saveAdmin("admin1@mail.com", "test-admin", "admin1");
 //		}
+	}
+
+	@Bean
+	//@LoadBalanced
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 
 }

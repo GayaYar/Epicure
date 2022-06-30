@@ -9,11 +9,14 @@ import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.exception.AlreadyExistsException;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.UserRepo;
+import com.moveo.epicure.request_model.Email;
 import com.moveo.epicure.util.LoginResponseMaker;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import org.springframework.http.HttpEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UserService {
@@ -21,17 +24,17 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     private AttemptRepo attemptRepo;
     private LoginResponseMaker loginResponseMaker;
-    private EmailSender emailSender;
+    private RestTemplate restTemplate;
     private static final long ALLOWED_ATTEMPTS = 10;
     private static final int ATTEMPT_MINUTES = 30;
 
     public UserService(UserRepo repo, PasswordEncoder passwordEncoder, AttemptRepo attemptRepo,
-            LoginResponseMaker loginResponseMaker, EmailSender emailSender) {
+            LoginResponseMaker loginResponseMaker, RestTemplate restTemplate) {
         this.repo = repo;
         this.passwordEncoder = passwordEncoder;
         this.attemptRepo = attemptRepo;
         this.loginResponseMaker = loginResponseMaker;
-        this.emailSender = emailSender;
+        this.restTemplate = restTemplate;
     }
 
     public Optional<LoginResponse> login(String email, String password, LocalDateTime now) {
@@ -60,7 +63,7 @@ public class UserService {
         if (optionalUser.isPresent()) {
             long attemptCount = attemptRepo.countByMailInTime(email, now.minusMinutes(ATTEMPT_MINUTES), now);
             if (attemptCount >= ALLOWED_ATTEMPTS) {
-                emailSender.messageAdmin("Blocked user attempts to login", "User with email: "+email
+                messageAdmin("Blocked user attempts to login", "User with email: "+email
                         +" has made more than "+ALLOWED_ATTEMPTS+" failed login attempts in the last "+ATTEMPT_MINUTES+" minutes.");
                 throw new AccountBlockedException();
             } else {
@@ -68,6 +71,12 @@ public class UserService {
             }
         }
         return Optional.empty();
+    }
+
+    private void messageAdmin(String subject, String body) {
+        String url = "http://loclhost:7002/email/admin?subject=";
+        HttpEntity<Email> request = new HttpEntity<>(new Email(subject, body));
+        restTemplate.postForEntity(url, request, Email.class);
     }
 
     public LoginResponse signup(RegisterInfo info) {

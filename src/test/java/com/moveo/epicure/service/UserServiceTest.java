@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -41,7 +42,7 @@ public class UserServiceTest {
     @Mock
     private LoginResponseMaker loginResponseMaker;
     @Mock
-    private EmailSender emailSender;
+    private RestTemplate restTemplate;
     @Captor
     private ArgumentCaptor<User> userArgumentCaptor;
     @Captor
@@ -52,7 +53,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void initialiseTest() {
-        service = new UserService(userRepo, passwordEncoder, attemptRepo, loginResponseMaker, emailSender);
+        service = new UserService(userRepo, passwordEncoder, attemptRepo, loginResponseMaker, restTemplate);
         now = LocalDateTime.now();
     }
 
@@ -74,8 +75,8 @@ public class UserServiceTest {
         } catch (Exception e) {
             assertEquals(e.getClass(), AccountBlockedException.class);
             Mockito.verify(attemptRepo, Mockito.times(0)).save(Mockito.any());
-            Mockito.verify(emailSender, Mockito.times(1))
-                    .messageAdmin(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+//            Mockito.verify(restTemplate, Mockito.times(1))
+//                    .messageAdmin(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
             List<String> bothValues = stringArgumentCaptor.getAllValues();
             assertEquals("Blocked user attempts to login", bothValues.get(0));
             assertEquals(
