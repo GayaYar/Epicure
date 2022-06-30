@@ -74,7 +74,7 @@ public class UserService {
     }
 
     private void messageAdmin(String subject, String body) {
-        String url = "http://loclhost:7002/email/admin?subject=";
+        String url = "http://localhost:7002/email/admin";
         HttpEntity<Email> request = new HttpEntity<>(new Email(subject, body));
         restTemplate.postForEntity(url, request, Email.class);
     }
