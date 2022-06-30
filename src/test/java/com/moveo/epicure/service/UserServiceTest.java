@@ -4,7 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.moveo.epicure.aws.EmailSender;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.LoginAttempt;
@@ -12,7 +11,6 @@ import com.moveo.epicure.entity.User;
 import com.moveo.epicure.entity.UserType;
 import com.moveo.epicure.exception.AccountBlockedException;
 import com.moveo.epicure.exception.AlreadyExistsException;
-import com.moveo.epicure.exception.NotFoundException;
 import com.moveo.epicure.mock.MockUser;
 import com.moveo.epicure.repo.AttemptRepo;
 import com.moveo.epicure.repo.UserRepo;

@@ -1,6 +1,5 @@
 package com.moveo.epicure.service;
 
-import com.moveo.epicure.aws.EmailSender;
 import com.moveo.epicure.dto.LoginResponse;
 import com.moveo.epicure.dto.RegisterInfo;
 import com.moveo.epicure.entity.LoginAttempt;
